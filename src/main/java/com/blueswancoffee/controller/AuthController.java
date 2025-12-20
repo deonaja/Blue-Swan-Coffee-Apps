@@ -36,6 +36,30 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestParam String name,
+                           @RequestParam String email, 
+                           @RequestParam String password,
+                           Model model) {
+        try {
+            com.blueswancoffee.model.Customer customer = new com.blueswancoffee.model.Customer();
+            customer.setName(name);
+            customer.setEmail(email);
+            customer.setPassword(password);
+            customer.setRole("CUSTOMER");
+            authService.register(customer);
+            return "redirect:/login";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "register";
+        }
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

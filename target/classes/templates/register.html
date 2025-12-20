@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Blue Swan Coffee</title>
+    <title>Register - Blue Swan Coffee</title>
 
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
@@ -110,29 +110,39 @@
       </nav>
     </div>
 
-    <!-- Login Content -->
-    <main class="flex-grow flex items-center justify-center px-4 relative z-10">
+    <!-- Register Content -->
+    <main class="flex-grow flex items-center justify-center px-4 relative z-10 pt-20">
         <div class="glass-card p-10 rounded-[2rem] w-full max-w-md shadow-2xl relative overflow-hidden">
             <!-- Decorative circle inside card -->
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-xl"></div>
             
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-extrabold text-[#1a1a1a]">Welcome <span class="text-primary italic">Back</span></h1>
-                <p class="text-gray-600 mt-2">Sign in to continue your coffee journey</p>
+                <h1 class="text-3xl font-extrabold text-[#1a1a1a]">Create <span class="text-primary italic">Account</span></h1>
+                <p class="text-gray-600 mt-2">Join us for the best coffee experience</p>
             </div>
             
             <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
                 <span class="block sm:inline" th:text="${error}">Error Message</span>
             </div>
 
-            <form action="/login" method="post" class="space-y-6">
+            <form action="/register" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2 ml-1" for="name">Full Name</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-feather="user" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 border border-white/60 focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-700 placeholder-gray-400 transition-all" id="name" type="text" name="name" placeholder="John Doe" required>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2 ml-1" for="email">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i data-feather="mail" class="h-5 w-5 text-gray-400"></i>
                         </div>
-                        <input class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 border border-white/60 focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-700 placeholder-gray-400 transition-all" id="email" type="text" name="email" placeholder="hello@example.com" required>
+                        <input class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/50 border border-white/60 focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-700 placeholder-gray-400 transition-all" id="email" type="text" name="email" placeholder="john@example.com" required>
                     </div>
                 </div>
                 
@@ -146,17 +156,13 @@
                     </div>
                 </div>
                 
-                <div class="flex items-center justify-between">
-                    <a href="#" class="text-sm font-medium text-primary hover:text-primary-dark hover:underline">Forgot password?</a>
-                </div>
-                
-                <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-dark hover:shadow-xl transition-all transform hover:-translate-y-1">
-                    Sign In
+                <button type="submit" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-dark hover:shadow-xl transition-all transform hover:-translate-y-1 mt-6">
+                    Sign Up
                 </button>
             </form>
             
             <div class="mt-8 text-center text-sm text-gray-600">
-                Don't have an account? <a th:href="@{/register}" class="font-bold text-primary hover:underline">Create one</a>
+                Already have an account? <a th:href="@{/login}" class="font-bold text-primary hover:underline">Login here</a>
             </div>
         </div>
     </main>
@@ -173,7 +179,6 @@
     <script th:src="@{/js/script.js}"></script>
     <script>
         const mobileMenuBtn = document.getElementById('hamburger-menu');
-        // Mobile Menu Logic would go here
     </script>
   </body>
 </html>
