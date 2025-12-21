@@ -81,4 +81,32 @@ public class CartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalAmount(total);
     }
+
+    @Transactional
+    public void removeItem(User user, UUID productId) {
+        Cart cart = getCart(user);
+        cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
+        recalculateTotal(cart);
+        cartRepository.save(cart);
+    }
+
+    @Transactional
+    public void updateItemQuantity(User user, UUID productId, int quantity) {
+        Cart cart = getCart(user);
+        Optional<CartItem> itemOpt = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+
+        if (itemOpt.isPresent()) {
+            CartItem item = itemOpt.get();
+            if (quantity <= 0) {
+                cart.getItems().remove(item);
+            } else {
+                item.setQuantity(quantity);
+                item.setSubtotal(item.getProduct().getPrice().multiply(BigDecimal.valueOf(quantity)));
+            }
+            recalculateTotal(cart);
+            cartRepository.save(cart);
+        }
+    }
 }

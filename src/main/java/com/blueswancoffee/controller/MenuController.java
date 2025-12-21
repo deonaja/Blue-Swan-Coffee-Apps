@@ -21,4 +21,12 @@ public class MenuController {
         model.addAttribute("items", items);
         return "menu";
     }
+
+    @GetMapping("/menu/{id}")
+    public String detail(@org.springframework.web.bind.annotation.PathVariable java.util.UUID id, Model model) {
+        MenuItem item = menuItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        model.addAttribute("item", item);
+        return "detail";
+    }
 }
