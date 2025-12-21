@@ -51,7 +51,7 @@ Selamat datang di repositori proyek **Blue Swan Coffee**. Ini adalah aplikasi we
 
 3.  **Jalankan Aplikasi**
     ```bash
-    mvn spring-boot:run
+    .\mvnw spring-boot:run
     ```
 
 4.  **Akses Aplikasi**
