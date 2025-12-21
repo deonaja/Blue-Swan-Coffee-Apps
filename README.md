@@ -100,6 +100,7 @@ Untuk anggota tim yang berkontribusi pada proyek ini (Cara Kerja GitHub):
 ## 👥 Kontributor
 
 *   **Kelompok 3 OCD**
+*   **MIlhamRidhoP**
 *   **Deonaja**
 
 ---
