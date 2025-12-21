@@ -1,11 +1,255 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Coffee Shop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu - Blue Swan Coffee</title>
+
+  <!-- Feather Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4a6fa5',
+            bg: '#d9c6b0',
+            'primary-dark': '#355a8c',
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .blob {
+      position: absolute;
+      filter: blur(40px);
+      z-index: -1;
+      opacity: 0.6;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+
+      33% {
+        transform: translate(30px, -50px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: #4a6fa5;
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  </style>
 </head>
-<body>
-    <h1>Welcome to Coffee Shop!</h1>
-    <p>Ini halaman menu pertama kamu 🎉</p>
+
+<body class="bg-bg text-[#1a1a1a] font-sans selection:bg-primary selection:text-white">
+
+  <!-- Background Elements -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+    <div class="blob bg-primary w-[600px] h-[600px] rounded-full top-[-20%] left-[-10%] opacity-20"></div>
+    <div
+      class="blob bg-white w-[400px] h-[400px] rounded-full bottom-[10%] right-[-5%] opacity-30 animation-delay-2000">
+    </div>
+  </div>
+
+  <!-- Floating Navbar -->
+  <div class="fixed w-full z-50 px-4 mt-6">
+    <nav class="max-w-7xl mx-auto glass-nav rounded-2xl flex justify-between items-center px-8 py-4">
+      <a th:href="@{/}" class="text-2xl font-bold text-primary italic tracking-tight">Blue Swan <span
+          class="text-[#1a1a1a]">Coffee.</span></a>
+
+      <div class="hidden lg:flex items-center gap-8">
+        <a th:href="@{/}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Home</a>
+        <a th:href="@{/#about}"
+          class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">About</a>
+        <a th:href="@{/menu}" class="nav-link text-primary font-bold transition-colors">Menu</a>
+        <a th:href="@{/#contact}"
+          class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Contact</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="#" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary"><i data-feather="search"
+            class="w-5 h-5"></i></a>
+        <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
+          <i data-feather="shopping-cart" class="w-5 h-5"></i>
+          <span th:if="${cart != null && !cart.items.empty}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        </a>
+
+        <a th:if="${session.user == null}" th:href="@{/login}"
+          class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
+        <a th:if="${session.user != null}" th:href="@{/logout}"
+          class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
+
+        <button id="hamburger-menu" class="lg:hidden p-2 text-[#1a1a1a]"><i data-feather="menu"></i></button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Menu Header -->
+  <section class="pt-40 pb-12 px-4 text-center">
+    <span
+      class="inline-block py-1 px-3 rounded-full bg-white/40 border border-white/50 text-primary font-bold text-sm mb-4 tracking-wide">WHAT'S
+      BREWING?</span>
+    <h1 class="text-5xl font-extrabold text-[#1a1a1a] mb-4">Our <span class="text-primary italic">Creations</span></h1>
+    <p class="max-w-xl mx-auto text-gray-700 text-lg">Taste the passion in every sip. Choose from our wide selection of
+      premium beverages and snacks.</p>
+  </section>
+
+  <!-- Filtering (Visual Only for now) -->
+  <section class="px-4 pb-12">
+    <div class="max-w-4xl mx-auto flex flex-wrap justify-center gap-4">
+      <button
+        class="px-6 py-2 rounded-full bg-primary text-white font-semibold shadow-lg hover:bg-primary-dark transition-all">All</button>
+      <button
+        class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-sm text-[#1a1a1a] font-semibold hover:bg-white transition-all">Coffee</button>
+      <button
+        class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-sm text-[#1a1a1a] font-semibold hover:bg-white transition-all">Non-Coffee</button>
+      <button
+        class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-sm text-[#1a1a1a] font-semibold hover:bg-white transition-all">Snacks</button>
+      <button
+        class="px-6 py-2 rounded-full bg-white/40 backdrop-blur-sm text-[#1a1a1a] font-semibold hover:bg-white transition-all">Beans</button>
+    </div>
+  </section>
+
+  <!-- Menu Grid -->
+  <section class="px-4 pb-24">
+    <div class="max-w-7xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <!-- Dynamic Item -->
+      <div th:each="item : ${items}"
+        class="glass-card rounded-[2rem] p-6 relative group transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col">
+        <div class="relative w-full aspect-square mb-6 rounded-[1.5rem] overflow-hidden">
+          <a th:href="@{/menu/{id}(id=${item.id})}">
+            <div class="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-all"></div>
+            <!-- Placeholder if image missing -->
+            <img src="img/menu/1.jpg" th:src="${item.imageUrl != null ? item.imageUrl : '/img/menu/1.jpg'}"
+              alt="Menu Image"
+              class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500" />
+          </a>
+
+          <button
+            class="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-md">
+            <i data-feather="heart" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="flex-grow">
+          <a th:href="@{/menu/{id}(id=${item.id})}">
+            <h3 class="text-2xl font-bold text-[#1a1a1a] mb-1 hover:text-primary transition-colors"
+              th:text="${item.name}">Espresso</h3>
+          </a>
+          <p class="text-sm text-gray-600 line-clamp-2 mb-4 h-10" th:text="${item.description}">Description goes here...
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-200/50">
+          <span class="text-xl font-extrabold text-primary" th:text="${'IDR ' + item.price}">IDR 25K</span>
+
+          <form action="/cart/add" method="post">
+            <input type="hidden" name="productId" th:value="${item.id}" />
+            <input type="hidden" name="quantity" value="1" />
+            <button type="submit"
+              class="w-12 h-12 bg-[#1a1a1a] text-white rounded-full flex items-center justify-center hover:bg-primary hover:scale-110 transition-all shadow-lg text-sm">
+              <i data-feather="plus" class="w-6 h-6"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#1a1a1a] text-white pt-20 pb-10 rounded-t-[3rem] mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold italic text-primary mb-8">Blue Swan Coffee.</h2>
+
+      <div class="flex justify-center gap-6 mb-8">
+        <a href="#"
+          class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i
+            data-feather="instagram"></i></a>
+        <!-- other social links -->
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-8 mb-12 text-gray-400">
+        <a th:href="@{/}" class="hover:text-primary transition-colors">Home</a>
+        <a th:href="@{/#about}" class="hover:text-primary transition-colors">About</a>
+        <a th:href="@{/menu}" class="text-primary font-bold">Menu</a>
+        <a th:href="@{/#contact}" class="hover:text-primary transition-colors">Contact</a>
+      </div>
+
+      <div class="border-t border-gray-800 pt-8 text-gray-500 text-sm">
+        <p>Created by <a href="https://github.com/deonaja" class="text-primary hover:underline">deonaja</a>. | &copy;
+          2023 All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- feather icons -->
+  <script>
+    feather.replace();
+  </script>
+  <script th:src="@{/js/script.js}"></script>
+  <script>
+    const mobileMenuBtn = document.getElementById('hamburger-menu');
+    // Mobile Menu Logic would go here
+  </script>
 </body>
+
 </html>
