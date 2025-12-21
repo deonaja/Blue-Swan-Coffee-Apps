@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incoming Orders - Blue Swan Coffee</title>
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4a6fa5',
+                        bg: '#d9c6b0',
+                        'primary-dark': '#355a8c',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+    </style>
+</head>
+
+<body class="bg-bg text-[#1a1a1a] font-sans min-h-screen flex flex-col selection:bg-primary selection:text-white">
+
+    <!-- Background Elements -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+        <div class="blob bg-primary w-[600px] h-[600px] rounded-full top-[-20%] left-[-10%] opacity-20"></div>
+        <div
+            class="blob bg-white w-[400px] h-[400px] rounded-full bottom-[10%] right-[-5%] opacity-30 animation-delay-2000">
+        </div>
+    </div>
+
+    <!-- Floating Navbar -->
+    <div class="fixed w-full z-50 px-4 mt-6">
+        <nav class="max-w-7xl mx-auto glass-nav rounded-2xl flex justify-between items-center px-8 py-4">
+            <div class="flex-shrink-0 flex items-center">
+                <a th:href="@{/barista/dashboard}" class="text-2xl font-bold text-primary italic">Blue Swan <span
+                        class="text-[#1a1a1a]">Barista</span></a>
+            </div>
+            <a th:href="@{/barista/dashboard}"
+                class="text-sm font-medium hover:text-primary flex items-center gap-2 group">
+                <i data-feather="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i> Back
+                to Dashboard
+            </a>
+        </nav>
+    </div>
+
+    <!-- Content -->
+    <main class="flex-grow container mx-auto px-4 pt-40 pb-10">
+        <div class="text-center mb-12">
+            <span class="inline-block py-1 px-3 rounded-full bg-white/40 border border-white/50 text-primary font-bold text-sm mb-4 tracking-wide">ACTION REQUIRED</span>
+            <h1 class="text-4xl font-extrabold text-[#1a1a1a]">Incoming <span class="text-primary italic">Orders</span></h1>
+        </div>
+
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Order Card -->
+            <div th:each="order : ${orders}" class="glass-card rounded-[2rem] p-6 relative group hover:-translate-y-1 transition-transform duration-300">
+                <div class="flex justifyContent-between items-center mb-4">
+                    <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold" th:text="${order.status}">PENDING</span>
+                    <span class="text-xs text-gray-500" th:text="${#temporals.format(order.createdAt, 'dd-MM-yyyy HH:mm')}">10:00 AM</span>
+                </div>
+                
+                <h3 class="text-xl font-bold mb-2" th:text="${'Order #' + order.id.toString().substring(0,8)}">Order #12345</h3>
+                <p class="text-sm text-gray-600 mb-4" th:text="${'Customer: ' + order.user.name}">Customer: John Doe</p>
+                
+                <div class="border-t border-gray-200/50 my-4"></div>
+                
+                <div class="space-y-2 mb-6 max-h-40 overflow-y-auto">
+                    <div th:each="item : ${order.items}" class="flex justify-between text-sm">
+                        <span class="font-medium text-gray-800"><span th:text="${item.quantity}">1</span>x <span th:text="${item.product.name}">Latte</span></span>
+                        <span class="text-gray-500" th:text="${'IDR ' + item.subtotal}">IDR 25000</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between mt-auto">
+                    <span class="text-lg font-extrabold text-primary" th:text="${'Total: IDR ' + order.totalAmount}">Total: IDR 25000</span>
+                </div>
+            </div>
+            
+             <!-- Empty State -->
+            <div th:if="${orders.empty}" class="col-span-full text-center py-20 text-gray-500">
+                <i data-feather="inbox" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
+                <p class="text-xl">No active orders at the moment.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1a1a1a] text-white py-8 mt-auto rounded-t-[3rem]">
+        <div class="container mx-auto text-center text-sm text-gray-400">
+            <p>&copy; 2023 Blue Swan Coffee. Barista Panel.</p>
+        </div>
+    </footer>
+
+    <script>
+        feather.replace();
+    </script>
+
+</body>
+
+</html>
