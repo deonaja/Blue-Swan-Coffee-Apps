@@ -3,6 +3,7 @@ package com.blueswancoffee.service;
 import com.blueswancoffee.model.*;
 import com.blueswancoffee.repository.OrderItemRepository;
 import com.blueswancoffee.repository.OrderRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,5 +48,9 @@ public class OrderService {
         cartService.clearCart(user);
 
         return savedOrder;
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
     }
 }
