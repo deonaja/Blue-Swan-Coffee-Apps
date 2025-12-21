@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -32,7 +36,12 @@ public class Order {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private Payment payment;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private List<OrderItem> items = new ArrayList<>();
 }

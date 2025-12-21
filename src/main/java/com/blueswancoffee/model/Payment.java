@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @ToString.Exclude
     private Order order;
 
     private BigDecimal amount;
