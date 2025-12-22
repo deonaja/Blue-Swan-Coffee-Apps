@@ -206,43 +206,38 @@
                     </form>
                   </td>
                 </tr>
-                </button>
-                </form>
-          </div>
-          </td>
-          </tr>
-          </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Checkout Summary -->
-      <div class="w-full lg:w-[350px] glass-card rounded-[2rem] p-8 h-fit shadow-xl"
-        th:if="${cart != null && !cart.items.empty}">
-        <h3 class="text-2xl font-bold mb-6">Summary</h3>
-        <div class="space-y-4 mb-8">
-          <div class="flex justify-between text-gray-600">
-            <span>Subtotal</span>
-            <span class="font-bold text-[#1a1a1a]">IDR <span th:text="${cart.totalAmount}">0</span></span>
-          </div>
-          <div class="border-t border-gray-300/50 my-4"></div>
-          <div class="flex justify-between text-xl font-extrabold text-[#1a1a1a]">
-            <span>Total</span>
-            <span class="text-primary">IDR <span th:text="${cart.totalAmount}">0</span></span>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <form action="/cart/checkout" method="post">
-          <button type="submit"
-            class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-dark hover:shadow-xl transition-all transform hover:-translate-y-1 mb-4">
-            Proceed to Checkout
-          </button>
-        </form>
-        <a th:href="@{/menu}"
-          class="block text-center text-gray-500 hover:text-primary transition-colors text-sm font-medium">Continue
-          Shopping</a>
+        <!-- Checkout Summary -->
+        <div class="w-full lg:w-[350px] glass-card rounded-[2rem] p-8 h-fit shadow-xl"
+          th:if="${cart != null && !cart.items.empty}">
+          <h3 class="text-2xl font-bold mb-6">Summary</h3>
+          <div class="space-y-4 mb-8">
+            <div class="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span class="font-bold text-[#1a1a1a]">IDR <span th:text="${cart.totalAmount}">0</span></span>
+            </div>
+            <div class="border-t border-gray-300/50 my-4"></div>
+            <div class="flex justify-between text-xl font-extrabold text-[#1a1a1a]">
+              <span>Total</span>
+              <span class="text-primary">IDR <span th:text="${cart.totalAmount}">0</span></span>
+            </div>
+          </div>
+
+          <form action="/cart/checkout" method="post">
+            <button type="submit"
+              class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-primary-dark hover:shadow-xl transition-all transform hover:-translate-y-1 mb-4">
+              Proceed to Checkout
+            </button>
+          </form>
+          <a th:href="@{/menu}"
+            class="block text-center text-gray-500 hover:text-primary transition-colors text-sm font-medium">Continue
+            Shopping</a>
+        </div>
       </div>
-    </div>
     </div>
   </main>
 
