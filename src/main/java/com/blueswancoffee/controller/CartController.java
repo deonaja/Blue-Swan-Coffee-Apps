@@ -37,15 +37,37 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public String addToCart(@RequestParam UUID productId,
+    @org.springframework.web.bind.annotation.ResponseBody
+    public Object addToCart(@RequestParam UUID productId,
             @RequestParam int quantity,
-            HttpSession session) {
+            HttpSession session,
+            jakarta.servlet.http.HttpServletRequest request) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
+            // If AJAX, return 401
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return org.springframework.http.ResponseEntity.status(401).body("Unauthorized");
+            }
             return "redirect:/login";
         }
+        
         cartService.addToCart(user, productId, quantity);
-        return "redirect:/menu";
+        
+        // If AJAX request, return JSON with new count
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            Cart cart = cartService.getCart(user);
+            int totalItems = cart.getItems().stream().mapToInt(com.blueswancoffee.model.CartItem::getQuantity).sum();
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("count", totalItems); // or cart.getItems().size() if badge counts unique items. Usually it's total quantity. 
+            // Just for safety let's assume we want just simple not empty indicator or total items. 
+            // The user said "icon cartnya jadi ada merahnya gitu" -> usually implies indicator or count.
+            // I'll return count.
+            return response;
+        }
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/menu");
     }
 
     @PostMapping("/checkout")
@@ -54,11 +76,9 @@ public class CartController {
         if (user == null) {
             return "redirect:/login";
         }
-        orderService.checkout(user);
-        // Ideally redirect to an orders list or confirmation page.
-        // Since we don't have an order history page yet, redirecting to menu with a
-        // param or just menu.
-        return "redirect:/menu";
+        com.blueswancoffee.model.Order order = orderService.checkout(user);
+        // Redirect to payment page for the new order
+        return "redirect:/payment/" + order.getId();
     }
 
     @PostMapping("/update")

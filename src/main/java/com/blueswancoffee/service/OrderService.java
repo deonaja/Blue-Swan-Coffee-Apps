@@ -31,7 +31,7 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setTotalAmount(cart.getTotalAmount());
-        order.setStatus("PENDING");
+        order.setStatus(OrderStatus.CREATED);
         Order savedOrder = orderRepository.save(order);
 
         // Convert CartItems to OrderItems

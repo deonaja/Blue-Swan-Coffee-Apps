@@ -1,0 +1,59 @@
+PERUBAHAN BRANCH SOFWAN ROSIDI
+==============================
+
+1. SISI SERVER (BACKEND - JAVA SPRING BOOT)
+-------------------------------------------
+A. Model Data (Model & Enums)
+   - [BARU] com.blueswancoffee.model.OrderStatus: Menambahkan Status Pesanan (DIBUAT, LUNAS, DIBATALKAN).
+   - [BARU] com.blueswancoffee.model.PaymentMethod: Menambahkan Metode Pembayaran (QRIS, TUNAI).
+   - [BARU] com.blueswancoffee.model.PaymentStatus: Menambahkan Status Pembayaran (BERHASIL, GAGAL).
+   - [UBAH] com.blueswancoffee.model.Order: Mengganti tipe data 'status' menjadi Enum agar lebih konsisten.
+   - [UBAH] com.blueswancoffee.model.Payment: Menambahkan kolom metode dan status pembayaran.
+
+B. Akses Data (Repository)
+   - [BARU] PaymentRepository: Wadah penyimpanan data pembayaran.
+   - [UBAH] OrderRepository: Menambahkan fungsi untuk mengambil riwayat pesanan urut dari yang paling baru.
+
+C. Logika Bisnis (Service)
+   - [UBAH] PaymentService: 
+     - Menambahkan simulasi proses pembayaran.
+     - Menambahkan sistem pengecekan otomatis: Pesanan akan DIBATALKAN jika tidak dibayar dalam 2 menit.
+
+D. Pengendali (Controller)
+   - [BARU] GlobalControllerAdvice: Memastikan tanda merah di ikon keranjang muncul di semua halaman.
+   - [UBAH] CartController:
+     - Tombol "Tambah ke Keranjang" tidak lagi memuat ulang (refresh) halaman (menggunakan AJAX).
+     - Halaman tidak berpindah paksa ke menu setelah menambah barang.
+   - [UBAH] PaymentController:
+     - Menghitung waktu mundur (countdown) di sisi server agar akurat.
+     - Menambahkan validasi kadaluwarsa saat halaman dibuka.
+   - [UBAH] HomeController: Menampilkan menu favorit secara otomatis di halaman depan.
+
+2. TAMPILAN PENGGUNA (FRONTEND - HTML & CSS)
+--------------------------------------------
+A. Halaman Pembayaran (payment.html)
+   - [DESAIN ULANG] Tampilan baru yang modern (Glassmorphism) menggunakan Bahasa Inggris (sesuai permintaan sebelumnya).
+   - [FITUR] Hitung Mundur 2 Menit (Sinkron dengan server).
+   - [FITUR] Reload Otomatis: Halaman akan menyegarkan diri saat waktu habis dan mengubah status menjadi GAGAL.
+
+B. Halaman Profil (profile.html)
+   - [BARU] Halaman profil baru yang lebih rapi.
+   - [NAVIGASI] Menu navigasi disamakan persis dengan halaman utama (Home).
+   - [BAHASA] Seluruh teks telah diubah ke Bahasa Inggris.
+   - [PERBAIKAN] Titik merah keranjang sekarang muncul di sini.
+
+C. Halaman Beranda (index.html)
+   - [PERBAIKAN] Memperbaiki tombol "Add to Cart" yang sebelumnya error.
+
+3. JAVASCRIPT & INTERAKSI
+-------------------------
+A. Script Utama (js/script.js)
+   - [FITUR] Tambah ke Keranjang Tanpa Reload:
+     - Tombol berubah menjadi "Adding..." lalu "Added" (Hijau).
+     - Tombol kembali normal setelah 2 detik.
+     - Badge keranjang muncul seketika tanpa refresh halaman.
+
+4. KONFIGURASI LAINNYA
+----------------------
+A. Pengaturan (application.properties)
+   - Penyesuaian konfigurasi database untuk mendukung perubahan status baru.
