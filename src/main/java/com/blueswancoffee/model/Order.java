@@ -31,8 +31,8 @@ public class Order {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
-    // Status: PENDING, PAID, BREWING, READY, COMPLETED
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();

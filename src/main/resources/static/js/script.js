@@ -55,4 +55,78 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', toggleMenu);
         });
     }
+
+    // AJAX Add to Cart Logic
+    const cartForms = document.querySelectorAll('form[action="/cart/add"]');
+    cartForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalContent = submitBtn.innerHTML;
+            
+            // Loading State
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Adding...';
+            feather.replace();
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        // Success Feedback
+                        submitBtn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> Added';
+                        feather.replace();
+                        submitBtn.classList.add('bg-green-500', 'text-white');
+                        submitBtn.classList.remove('bg-[#1a1a1a]');
+                        submitBtn.disabled = false; // Enable again to allow adding more
+
+                        // Update Cart Badge
+                        const cartIcons = document.querySelectorAll('a[href*="/cart"]');
+                        cartIcons.forEach(iconLink => {
+                            // Check if badge exists
+                            let badge = iconLink.querySelector('span');
+                            if (!badge) {
+                                // Create badge if not exists
+                                badge = document.createElement('span');
+                                badge.className = 'absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white animate-bounce';
+                                iconLink.appendChild(badge);
+                                iconLink.classList.add('relative');
+                            } else {
+                                // Animate existing badge
+                                badge.classList.remove('animate-bounce');
+                                void badge.offsetWidth; // trigger reflow
+                                badge.classList.add('animate-bounce');
+                            }
+                        });
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            submitBtn.innerHTML = originalContent;
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('bg-green-500');
+                            submitBtn.classList.add('bg-[#1a1a1a]');
+                            feather.replace();
+                        }, 2000);
+                    }
+                } else if (response.status === 401) {
+                     window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                submitBtn.innerHTML = originalContent;
+                submitBtn.disabled = false;
+                feather.replace();
+            }
+        });
+    });
 });

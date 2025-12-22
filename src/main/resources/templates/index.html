@@ -110,12 +110,16 @@
         </div>
 
         <div class="flex items-center gap-4">
-          <a href="#" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary"><i data-feather="search" class="w-5 h-5"></i></a>
+
           <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
             <i data-feather="shopping-cart" class="w-5 h-5"></i>
             <span th:if="${cart != null && !cart.items.empty}" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
           </a>
           
+          <a th:if="${session.user != null}" th:href="@{/profile}" class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="Profil Saya">
+             <i data-feather="user" class="w-5 h-5"></i>
+          </a>
+
           <a th:if="${session.user == null}" th:href="@{/login}" class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
           <a th:if="${session.user != null}" th:href="@{/logout}" class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
           
@@ -209,56 +213,34 @@
 
         <!-- Horizontal Scroll Snapping for Mobile, Grid for Desktop -->
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Item 1 -->
-            <div class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl">
-                <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">HOT</div>
-                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all">
-                    <img src="img/menu/1.jpg" class="w-full h-full object-cover rounded-full" alt="Coffee">
+            <!-- Dynamic Item Loop -->
+            <div th:each="item : ${favorites}" 
+                 class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl flex flex-col">
+                <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">POPULAR</div>
+                
+                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all overflow-hidden relative">
+                    <!-- Link to detail page -->
+                    <a th:href="@{/menu/{id}(id=${item.id})}">
+                         <img src="img/menu/1.jpg" th:src="${item.imageUrl != null ? item.imageUrl : '/img/menu/1.jpg'}" 
+                              class="w-full h-full object-cover rounded-full transform group-hover:scale-110 transition-transform duration-500" 
+                              alt="Coffee">
+                    </a>
                 </div>
-                <h3 class="text-xl font-bold mb-2">Espresso</h3>
-                <p class="text-primary font-bold text-lg mb-4">IDR 25K</p>
-                <form action="/cart/add" method="post">
-                    <input type="hidden" name="productId" value="1" /> 
-                    <button class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
+                
+                <div class="flex-grow text-center">
+                    <a th:href="@{/menu/{id}(id=${item.id})}">
+                        <h3 class="text-xl font-bold mb-2 text-[#1a1a1a] group-hover:text-primary transition-colors" th:text="${item.name}">Espresso</h3>
+                    </a>
+                    <p class="text-primary font-bold text-lg mb-4" th:text="'IDR ' + ${item.price}">IDR 25K</p>
+                </div>
+
+                <form action="/cart/add" method="post" class="mt-auto">
+                    <input type="hidden" name="productId" th:value="${item.id}" /> 
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
                         Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
                     </button>
                 </form>
-            </div>
-            
-            <!-- Item 2 (Placeholder) -->
-            <div class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl">
-                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all">
-                    <img src="img/menu/1.jpg" class="w-full h-full object-cover rounded-full" alt="Coffee">
-                </div>
-                <h3 class="text-xl font-bold mb-2">Cappuccino</h3>
-                <p class="text-primary font-bold text-lg mb-4">IDR 30K</p>
-                <button class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
-                    Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
-                </button>
-            </div>
-
-             <!-- Item 3 (Placeholder) -->
-             <div class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl">
-                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all">
-                    <img src="img/menu/1.jpg" class="w-full h-full object-cover rounded-full" alt="Coffee">
-                </div>
-                <h3 class="text-xl font-bold mb-2">Latte</h3>
-                <p class="text-primary font-bold text-lg mb-4">IDR 28K</p>
-                <button class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
-                    Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
-                </button>
-            </div>
-            
-             <!-- Item 4 (Placeholder) -->
-             <div class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl">
-                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all">
-                    <img src="img/menu/1.jpg" class="w-full h-full object-cover rounded-full" alt="Coffee">
-                </div>
-                <h3 class="text-xl font-bold mb-2">Mocha</h3>
-                <p class="text-primary font-bold text-lg mb-4">IDR 32K</p>
-                <button class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
-                    Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
-                </button>
             </div>
         </div>
         
