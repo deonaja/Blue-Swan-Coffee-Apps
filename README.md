@@ -101,6 +101,7 @@ Untuk anggota tim yang berkontribusi pada proyek ini (Cara Kerja GitHub):
 
 *   **Kelompok 3 OCD**
 *   **MIlhamRidhoP**
+*   **Sofwanrsd | sofwandev
 *   **Deonaja**
 
 ---
