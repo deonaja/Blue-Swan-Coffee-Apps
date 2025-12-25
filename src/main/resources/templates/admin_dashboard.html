@@ -134,19 +134,27 @@
                 </div>
             </div>
 
-            <!-- Manage Users Card (Placeholder) -->
+            <!-- View Reports Card -->
             <div
-                class="glass-card p-8 rounded-[1.5rem] shadow-sm opacity-70 relative overflow-hidden flex flex-col border border-gray-200">
-                <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 mb-4">
-                    <i data-feather="users" class="w-6 h-6"></i>
+                class="glass-card p-8 rounded-[1.5rem] shadow-sm hover:shadow-xl transition-all cursor-pointer group relative overflow-hidden flex flex-col hover:-translate-y-2 duration-300">
+                <div
+                    class="absolute -right-10 -bottom-10 w-40 h-40 bg-green-500/10 rounded-full group-hover:scale-150 transition-transform duration-500">
                 </div>
-                <h2 class="text-2xl font-bold mb-2 text-gray-500">Manage Users</h2>
-                <p class="text-gray-500 mb-6">View and manage registered users.</p>
-                <div class="mt-auto">
-                    <button disabled
-                        class="px-6 py-3 bg-gray-200 text-gray-500 rounded-xl font-semibold cursor-not-allowed flex items-center gap-2">
-                        Coming Soon <i data-feather="lock" class="w-4 h-4"></i>
-                    </button>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center text-green-600 mb-4">
+                        <i data-feather="bar-chart-2" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2 text-[#1a1a1a] group-hover:text-green-600 transition-colors">View
+                        Reports</h2>
+                    <p class="text-gray-600 mb-6">Check sales performance, order history, and popular items.</p>
+                    <div class="mt-auto">
+                        <a th:href="@{/admin/reports}"
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:-translate-y-1 shadow-lg">
+                            View Reports <i data-feather="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
