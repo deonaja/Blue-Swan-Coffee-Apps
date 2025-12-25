@@ -22,13 +22,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email, 
-                        @RequestParam String password, 
-                        HttpSession session,
-                        Model model) {
+    public String login(@RequestParam String email,
+            @RequestParam String password,
+            HttpSession session,
+            Model model) {
         User user = authService.login(email, password);
         if (user != null) {
             session.setAttribute("user", user);
+            if ("ADMIN".equals(user.getRole())) {
+                return "redirect:/admin/dashboard";
+            }
             return "redirect:/menu";
         } else {
             model.addAttribute("error", "Invalid email or password");
@@ -43,9 +46,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@RequestParam String name,
-                           @RequestParam String email, 
-                           @RequestParam String password,
-                           Model model) {
+            @RequestParam String email,
+            @RequestParam String password,
+            Model model) {
         try {
             com.blueswancoffee.model.Customer customer = new com.blueswancoffee.model.Customer();
             customer.setName(name);
