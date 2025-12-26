@@ -31,6 +31,9 @@ public class Order {
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
+    @Column(name = "pickup_code")
+    private String pickupCode;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -44,4 +47,20 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<OrderItem> items = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "barista_id")
+    private Barista barista;
+
+    public String getPickupCode() {
+        return pickupCode;
+    }
+
+    public void setPickupCode(String pickupCode) {
+        this.pickupCode = pickupCode;
+    }
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    private Review review;
 }
