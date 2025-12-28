@@ -32,6 +32,9 @@ public class AuthController {
             if ("ADMIN".equals(user.getRole())) {
                 return "redirect:/admin/dashboard";
             }
+            if ("BARISTA".equals(user.getRole())) {
+                return "redirect:/barista/dashboard";
+            }
             return "redirect:/menu";
         } else {
             model.addAttribute("error", "Invalid email or password");

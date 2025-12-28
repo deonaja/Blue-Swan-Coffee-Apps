@@ -26,11 +26,7 @@ public class CartService {
     @Transactional
     public void addToCart(User user, UUID productId, int quantity) {
         // 1. Get or Create Cart
-        Cart cart = cartRepository.findByUser(user).orElseGet(() -> {
-            Cart newCart = new Cart();
-            newCart.setUser(user);
-            return cartRepository.save(newCart);
-        });
+        Cart cart = getCart(user);
 
         // 2. Find Product
         MenuItem product = menuItemRepository.findById(productId)
@@ -59,11 +55,18 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    @Transactional
     public Cart getCart(User user) {
-        return cartRepository.findByUser(user).orElseGet(() -> {
-            Cart newCart = new Cart();
-            newCart.setUser(user);
-            return cartRepository.save(newCart);
+        return cartRepository.findByUserId(user.getId()).orElseGet(() -> {
+            try {
+                Cart newCart = new Cart();
+                newCart.setUser(user);
+                return cartRepository.save(newCart);
+            } catch (org.springframework.dao.DataIntegrityViolationException e) {
+                // Retry in case another thread created it
+                return cartRepository.findByUserId(user.getId())
+                        .orElseThrow(() -> new RuntimeException("Cart creation failed", e));
+            }
         });
     }
 
