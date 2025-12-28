@@ -65,28 +65,47 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalContent = submitBtn.innerHTML;
             
-            // Loading State
+            // Loading State - detect button type
+            const isRoundButton = submitBtn.classList.contains('rounded-full') && submitBtn.classList.contains('w-12');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Adding...';
+            if (isRoundButton) {
+                // Menu page: just spinner icon
+                submitBtn.innerHTML = '<i data-feather="loader" class="w-6 h-6 animate-spin"></i>';
+            } else {
+                // Detail page: spinner with text
+                submitBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Adding...';
+            }
             feather.replace();
 
             try {
                 const formData = new FormData(form);
-                const response = await fetch('/cart/add', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: formData
-                });
+                
+                // Add minimum delay so loading animation is visible
+                const [response] = await Promise.all([
+                    fetch('/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    }),
+                    new Promise(resolve => setTimeout(resolve, 500)) // minimum 500ms delay
+                ]);
 
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        // Success Feedback
-                        submitBtn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> Added';
+                        // Success Feedback - check if it's a round button (menu page) or text button
+                        const isRoundButton = submitBtn.classList.contains('rounded-full') && submitBtn.classList.contains('w-12');
+                        if (isRoundButton) {
+                            // Menu page: just show checkmark icon
+                            submitBtn.innerHTML = '<i data-feather="check" class="w-6 h-6"></i>';
+                        } else {
+                            // Detail page: show "Added" text with checkmark
+                            submitBtn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> Added';
+                        }
                         feather.replace();
-                        submitBtn.classList.add('bg-green-500', 'text-white');
+                        submitBtn.classList.add('bg-primary', 'text-white');
                         submitBtn.classList.remove('bg-[#1a1a1a]');
                         submitBtn.disabled = false; // Enable again to allow adding more
 
@@ -113,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setTimeout(() => {
                             submitBtn.innerHTML = originalContent;
                             submitBtn.disabled = false;
-                            submitBtn.classList.remove('bg-green-500');
+                            submitBtn.classList.remove('bg-primary');
                             submitBtn.classList.add('bg-[#1a1a1a]');
                             feather.replace();
                         }, 2000);
