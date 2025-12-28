@@ -148,4 +148,54 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // AJAX Toggle Favorite Logic
+    const favoriteBtns = document.querySelectorAll('.favorite-btn');
+    favoriteBtns.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const itemId = btn.getAttribute('data-item-id');
+            if (!itemId) return;
+            
+            // Disable button during request
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`/menu/favorite/${itemId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        // Toggle visual state
+                        if (data.favorited) {
+                            btn.classList.add('favorited', 'bg-red-500', 'text-white');
+                            btn.classList.remove('bg-white/80', 'text-red-500');
+                            // Update icon to filled
+                            const icon = btn.querySelector('svg');
+                            if (icon) icon.classList.add('fill-current');
+                        } else {
+                            btn.classList.remove('favorited', 'bg-red-500', 'text-white');
+                            btn.classList.add('bg-white/80', 'text-red-500');
+                            // Update icon to outline
+                            const icon = btn.querySelector('svg');
+                            if (icon) icon.classList.remove('fill-current');
+                        }
+                    }
+                } else if (response.status === 401) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
 });

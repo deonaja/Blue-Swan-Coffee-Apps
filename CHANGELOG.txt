@@ -57,3 +57,33 @@ A. Script Utama (js/script.js)
 ----------------------
 A. Pengaturan (application.properties)
    - Penyesuaian konfigurasi database untuk mendukung perubahan status baru.
+
+5. FITUR FAVORITE / LOVE (28 DESEMBER 2025)
+-------------------------------------------
+A. Model Data (Model)
+   - [BARU] com.blueswancoffee.model.Favorite: Entity untuk menyimpan relasi user-menuItem favorit.
+
+B. Akses Data (Repository)
+   - [BARU] FavoriteRepository: Wadah penyimpanan data favorit dengan query custom.
+
+C. Logika Bisnis (Service)
+   - [BARU] FavoriteService: 
+     - Toggle favorit (tambah/hapus).
+     - Cek status favorit.
+     - Ambil daftar ID menu favorit user.
+
+D. Pengendali (Controller)
+   - [UBAH] MenuController:
+     - Menu favorit tampil paling atas (sorting).
+     - Endpoint POST /menu/favorite/{id} untuk toggle favorit via AJAX.
+     - Pass favoriteIds ke template untuk render status heart.
+     - Semua role (Customer, Barista, Admin) dapat memfavoritkan menu.
+
+E. Tampilan (Frontend)
+   - [UBAH] menu.html:
+     - Tombol love/heart dinamis: merah filled jika favorit, outline jika tidak.
+     - Semua user yang login bisa klik heart untuk memfavoritkan.
+     - Guest klik heart → redirect ke halaman login.
+   - [UBAH] script.js:
+     - AJAX toggle favorite tanpa reload halaman.
+     - Animasi perubahan warna dan ikon heart.
