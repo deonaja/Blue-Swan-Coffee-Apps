@@ -19,9 +19,9 @@ public class OrderController {
     private OrderRepository orderRepository;
 
     @GetMapping("/profile")
-    public String profile(HttpSession session, Model model, 
-                          @RequestParam(required = false) String success,
-                          @RequestParam(required = false) String error) {
+    public String profile(HttpSession session, Model model,
+            @RequestParam(required = false) String success,
+            @RequestParam(required = false) String error) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
@@ -44,5 +44,24 @@ public class OrderController {
         }
 
         return "profile";
+    }
+
+    @GetMapping("/orders/{id}/details")
+    public String orderDetail(@org.springframework.web.bind.annotation.PathVariable("id") java.util.UUID id,
+            HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Order order = orderRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            return "redirect:/profile?error=Unauthorized";
+        }
+
+        model.addAttribute("order", order);
+        return "order-detail";
     }
 }

@@ -11,4 +11,9 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findByUserOrderByCreatedAtDesc(User user);
+
+    @org.springframework.data.jpa.repository.Query("SELECT o FROM Order o LEFT JOIN FETCH o.items i LEFT JOIN FETCH i.product WHERE o.id = :id")
+    java.util.Optional<Order> findByIdWithDetails(@org.springframework.data.repository.query.Param("id") UUID id);
+
+    boolean existsByUserAndStatus(User user, com.blueswancoffee.model.OrderStatus status);
 }

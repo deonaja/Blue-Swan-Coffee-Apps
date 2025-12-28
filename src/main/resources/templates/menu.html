@@ -120,23 +120,30 @@
         <a href="/#about" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">About</a>
         <a th:href="@{/menu}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Menu</a>
         <a href="/#contact" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Contact</a>
-        </div>
+      </div>
 
-        <div class="flex items-center gap-4">
-             <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
-                <i data-feather="shopping-cart" class="w-5 h-5"></i>
-                <span th:if="${cart != null && !cart.items.empty}" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
-            </a>
+      <div class="flex items-center gap-4">
+        <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
+          <i data-feather="shopping-cart" class="w-5 h-5"></i>
+          <span th:if="${cart != null && !cart.items.empty}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        </a>
 
-            <a th:if="${session.user != null}" th:href="@{/profile}" class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="Profil Saya">
-                 <i data-feather="user" class="w-5 h-5"></i>
-            </a>
+        <a th:if="${session.user != null}" th:href="@{/profile}"
+          class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm relative"
+          title="Profil Saya">
+          <i data-feather="user" class="w-5 h-5"></i>
+          <span th:if="${hasUnpaidOrder}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        </a>
 
-            <a th:if="${session.user == null}" th:href="@{/login}" class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
-            <a th:if="${session.user != null}" th:href="@{/logout}" class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
-            
-            <button id="hamburger-menu" class="lg:hidden p-2 text-[#1a1a1a]"><i data-feather="menu"></i></button>
-        </div>
+        <a th:if="${session.user == null}" th:href="@{/login}"
+          class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
+        <a th:if="${session.user != null}" th:href="@{/logout}"
+          class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
+
+        <button id="hamburger-menu" class="lg:hidden p-2 text-[#1a1a1a]"><i data-feather="menu"></i></button>
+      </div>
     </nav>
   </div>
 
