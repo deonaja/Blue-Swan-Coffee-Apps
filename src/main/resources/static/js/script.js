@@ -198,4 +198,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // AJAX Cart Quantity Update Logic
+    const qtyInputs = document.querySelectorAll('.qty-input');
+    let updateTimeout = null;
+    
+    qtyInputs.forEach(input => {
+        input.addEventListener('change', async (e) => {
+            const productId = input.getAttribute('data-product-id');
+            const quantity = parseInt(input.value);
+            
+            if (!productId || isNaN(quantity) || quantity < 1) return;
+            
+            // Clamp quantity to valid range
+            if (quantity > 10) input.value = 10;
+            if (quantity < 1) input.value = 1;
+            
+            // Visual feedback - show loading state
+            input.classList.add('opacity-50');
+            
+            // Debounce to avoid too many requests
+            if (updateTimeout) clearTimeout(updateTimeout);
+            
+            updateTimeout = setTimeout(async () => {
+                try {
+                    const formData = new FormData();
+                    formData.append('productId', productId);
+                    formData.append('quantity', input.value);
+                    
+                    const response = await fetch('/cart/update', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            // Format number with 2 decimal places
+                            const formatPrice = (num) => parseFloat(num).toFixed(2);
+                            
+                            // Update item total in the same row
+                            const row = input.closest('.cart-item');
+                            if (row) {
+                                const itemTotalCell = row.querySelector('.item-total');
+                                if (itemTotalCell) {
+                                    itemTotalCell.textContent = 'IDR ' + formatPrice(data.itemTotal);
+                                }
+                            }
+                            
+                            // Update cart subtotal and total
+                            const subtotalEl = document.getElementById('cart-subtotal');
+                            const totalEl = document.getElementById('cart-total');
+                            if (subtotalEl) subtotalEl.textContent = formatPrice(data.cartTotal);
+                            if (totalEl) totalEl.textContent = formatPrice(data.cartTotal);
+                        }
+                    } else if (response.status === 401) {
+                        window.location.href = '/login';
+                    }
+                } catch (error) {
+                    console.error('Error updating cart:', error);
+                } finally {
+                    input.classList.remove('opacity-50');
+                }
+            }, 300); // 300ms debounce
+        });
+    });
 });

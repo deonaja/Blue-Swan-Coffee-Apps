@@ -87,3 +87,20 @@ E. Tampilan (Frontend)
    - [UBAH] script.js:
      - AJAX toggle favorite tanpa reload halaman.
      - Animasi perubahan warna dan ikon heart.
+
+6. CART QUANTITY AUTO-UPDATE (29 DESEMBER 2025)
+------------------------------------------------
+A. Pengendali (Controller)
+   - [UBAH] CartController:
+     - Endpoint /cart/update mendukung AJAX.
+     - Return JSON dengan itemTotal dan cartTotal yang diupdate.
+
+B. Tampilan (Frontend)
+   - [UBAH] cart.html:
+     - Tombol refresh dihapus, quantity auto-update saat diubah.
+     - Tambah data attributes untuk JavaScript.
+     - Tambah ID untuk subtotal dan total (cart-subtotal, cart-total).
+   - [UBAH] script.js:
+     - AJAX update quantity dengan debounce 300ms.
+     - Update item total dan cart total tanpa refresh halaman.
+     - Visual feedback (opacity) saat loading.
