@@ -1,331 +1,382 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blue Swan Coffee</title>
 
-    <!-- Feather Icons -->
-    <script src="https://unpkg.com/feather-icons"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blue Swan Coffee</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Feather Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#4a6fa5',
-              bg: '#d9c6b0',
-              'primary-dark': '#355a8c',
-            },
-            fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-            },
-            boxShadow: {
-              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
-            }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4a6fa5',
+            bg: '#d9c6b0',
+            'primary-dark': '#355a8c',
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+          boxShadow: {
+            'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
           }
         }
       }
-    </script>
-    
-    <style>
-      /* Custom Animations & Shapes */
-      .blob {
-        position: absolute;
-        filter: blur(40px);
-        z-index: -1;
-        opacity: 0.6;
-        animation: float 10s ease-in-out infinite;
-      }
-      @keyframes float {
-        0% { transform: translate(0px, 0px) scale(1); }
-        33% { transform: translate(30px, -50px) scale(1.1); }
-        66% { transform: translate(-20px, 20px) scale(0.9); }
-        100% { transform: translate(0px, 0px) scale(1); }
-      }
-      
-      .glass-nav {
-        background: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-      }
-      
-      .glass-card {
-        background: rgba(255, 255, 255, 0.4);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+  </script>
+
+  <style>
+    /* Custom Animations & Shapes */
+    .blob {
+      position: absolute;
+      filter: blur(40px);
+      z-index: -1;
+      opacity: 0.6;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translate(0px, 0px) scale(1);
       }
 
-      /* Hover underline */
-      .nav-link {
-        position: relative;
+      33% {
+        transform: translate(30px, -50px) scale(1.1);
       }
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -2px;
-        left: 0;
-        background-color: #4a6fa5;
-        transition: width 0.3s;
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
       }
-      .nav-link:hover::after {
-        width: 100%;
+
+      100% {
+        transform: translate(0px, 0px) scale(1);
       }
-    </style>
-  </head>
-  <body class="bg-bg text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden">
-    
-    <!-- Background Elements -->
-    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
-        <div class="blob bg-primary w-[500px] h-[500px] rounded-full top-[-10%] right-[-10%] opacity-20"></div>
-        <div class="blob bg-white w-[300px] h-[300px] rounded-full bottom-[10%] left-[-5%] opacity-30 animation-delay-2000"></div>
+    }
+
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    /* Hover underline */
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: #4a6fa5;
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="bg-bg text-[#1a1a1a] font-sans selection:bg-primary selection:text-white overflow-x-hidden">
+
+  <!-- Background Elements -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
+    <div class="blob bg-primary w-[500px] h-[500px] rounded-full top-[-10%] right-[-10%] opacity-20"></div>
+    <div class="blob bg-white w-[300px] h-[300px] rounded-full bottom-[10%] left-[-5%] opacity-30 animation-delay-2000">
     </div>
+  </div>
 
-    <!-- Floating Navbar -->
-    <div class="fixed w-full z-50 px-4 mt-6">
-      <nav class="max-w-7xl mx-auto glass-nav rounded-2xl flex justify-between items-center px-8 py-4">
-        <a href="#" class="text-2xl font-bold text-primary italic tracking-tight">Blue Swan <span class="text-[#1a1a1a]">Coffee.</span></a>
+  <!-- Floating Navbar -->
+  <div class="fixed w-full z-50 px-4 mt-6">
+    <nav class="max-w-7xl mx-auto glass-nav rounded-2xl flex justify-between items-center px-8 py-4">
+      <a href="#" class="text-2xl font-bold text-primary italic tracking-tight">Blue Swan <span
+          class="text-[#1a1a1a]">Coffee.</span></a>
 
-        <div class="hidden lg:flex items-center gap-8">
-          <a th:href="@{/}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Home</a>
-          <a href="#about" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">About</a>
-          <a th:href="@{/menu}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Menu</a>
-          <a href="#contact" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Contact</a>
-        </div>
+      <div class="hidden lg:flex items-center gap-8">
+        <a th:href="@{/}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Home</a>
+        <a href="#about" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">About</a>
+        <a th:href="@{/menu}" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Menu</a>
+        <a href="#contact" class="nav-link text-[#1a1a1a] font-medium hover:text-primary transition-colors">Contact</a>
+      </div>
 
-        <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4">
 
-          <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
-            <i data-feather="shopping-cart" class="w-5 h-5"></i>
-            <span th:if="${cart != null && !cart.items.empty}" class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        <a th:href="@{/cart}" class="p-2 rounded-full hover:bg-white/50 transition-all text-primary relative">
+          <i data-feather="shopping-cart" class="w-5 h-5"></i>
+          <span th:if="${cart != null && !cart.items.empty}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        </a>
+
+        <a th:if="${session.user != null}" th:href="@{/profile}"
+          class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm relative"
+          title="Profil Saya">
+          <i data-feather="user" class="w-5 h-5"></i>
+          <span th:if="${hasUnpaidOrder}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
+        </a>
+
+        <a th:if="${session.user == null}" th:href="@{/login}"
+          class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
+        <a th:if="${session.user != null}" th:href="@{/logout}"
+          class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
+
+        <button id="hamburger-menu" class="lg:hidden p-2 text-[#1a1a1a]"><i data-feather="menu"></i></button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen flex items-center pt-28 px-4 lg:px-0 relative">
+    <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
+      <!-- Text Content -->
+      <div class="text-center lg:text-left z-10 px-4">
+        <span
+          class="inline-block py-1 px-3 rounded-full bg-white/40 border border-white/50 text-primary font-bold text-sm mb-6 tracking-wide">PREMIUM
+          COFFEE EXPERIENCE</span>
+        <h1 class="text-5xl lg:text-7xl font-extrabold text-[#1a1a1a] leading-tight mb-6">
+          Wake Up <br />
+          <span class="text-primary italic">Better.</span>
+        </h1>
+        <p class="text-lg text-gray-700 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
+          Experience the perfect blend of passion and tradition in every cup. Blue Swan Coffee brings you the finest
+          beans from around the world.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <a th:href="@{/menu}"
+            class="px-8 py-4 bg-primary text-white text-lg font-bold rounded-full shadow-lg hover:shadow-primary/50 hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+            Order Now
           </a>
-          
-          <a th:if="${session.user != null}" th:href="@{/profile}" class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="Profil Saya">
-             <i data-feather="user" class="w-5 h-5"></i>
+          <a href="#about"
+            class="px-8 py-4 bg-white/50 backdrop-blur-sm text-[#1a1a1a] text-lg font-bold rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all">
+            Learn More
           </a>
-
-          <a th:if="${session.user == null}" th:href="@{/login}" class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
-          <a th:if="${session.user != null}" th:href="@{/logout}" class="hidden lg:inline-block px-6 py-2 border-2 border-red-500 text-red-500 rounded-full font-semibold hover:bg-red-500 hover:text-white transition-all">Logout</a>
-          
-          <button id="hamburger-menu" class="lg:hidden p-2 text-[#1a1a1a]"><i data-feather="menu"></i></button>
         </div>
-      </nav>
+      </div>
+
+      <!-- Hero Image Composition -->
+      <div class="relative z-10 hidden lg:block">
+        <div class="relative w-[500px] h-[600px] mx-auto">
+          <div class="absolute inset-0 bg-primary/20 rounded-[40px] rotate-6 transform"></div>
+          <img src="/img/ben-garratt-OMFtBJb8kgg-unsplash.jpg" alt="Coffee Hero"
+            class="absolute inset-0 w-full h-full object-cover rounded-[40px] shadow-2xl transform -rotate-3 transition hover:rotate-0 duration-500" />
+
+          <!-- Floating Card Detail -->
+          <div class="absolute -bottom-8 -left-8 glass-card p-6 rounded-2xl flex items-center gap-4 animate-bounce"
+            style="animation-duration: 3s;">
+            <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+              <i data-feather="coffee"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-[#1a1a1a]">Best Seller</h4>
+              <p class="text-sm text-gray-600">Caramel Macchiato</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center pt-28 px-4 lg:px-0 relative">
-      <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
-        <!-- Text Content -->
-        <div class="text-center lg:text-left z-10 px-4">
-            <span class="inline-block py-1 px-3 rounded-full bg-white/40 border border-white/50 text-primary font-bold text-sm mb-6 tracking-wide">PREMIUM COFFEE EXPERIENCE</span>
-            <h1 class="text-5xl lg:text-7xl font-extrabold text-[#1a1a1a] leading-tight mb-6">
-                Wake Up <br/>
-                <span class="text-primary italic">Better.</span>
-            </h1>
-            <p class="text-lg text-gray-700 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Experience the perfect blend of passion and tradition in every cup. Blue Swan Coffee brings you the finest beans from around the world.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a th:href="@{/menu}" class="px-8 py-4 bg-primary text-white text-lg font-bold rounded-full shadow-lg hover:shadow-primary/50 hover:bg-primary-dark transition-all transform hover:-translate-y-1">
-                    Order Now
-                </a>
-                <a href="#about" class="px-8 py-4 bg-white/50 backdrop-blur-sm text-[#1a1a1a] text-lg font-bold rounded-full shadow-sm hover:bg-white hover:shadow-md transition-all">
-                    Learn More
-                </a>
-            </div>
+  <!-- About Section -->
+  <section id="about" class="py-24 px-4 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="order-2 lg:order-1 relative">
+          <img src="img/About Us.jpg" alt="About Us" class="w-full rounded-[3rem] shadow-xl relative z-10" />
+          <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/30 rounded-full blur-2xl z-0"></div>
         </div>
 
-        <!-- Hero Image Composition -->
-        <div class="relative z-10 hidden lg:block">
-            <div class="relative w-[500px] h-[600px] mx-auto">
-                <div class="absolute inset-0 bg-primary/20 rounded-[40px] rotate-6 transform"></div>
-                <img src="/img/ben-garratt-OMFtBJb8kgg-unsplash.jpg" alt="Coffee Hero" class="absolute inset-0 w-full h-full object-cover rounded-[40px] shadow-2xl transform -rotate-3 transition hover:rotate-0 duration-500" />
-                
-                <!-- Floating Card Detail -->
-                <div class="absolute -bottom-8 -left-8 glass-card p-6 rounded-2xl flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
-                    <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary">
-                        <i data-feather="coffee"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-[#1a1a1a]">Best Seller</h4>
-                        <p class="text-sm text-gray-600">Caramel Macchiato</p>
-                    </div>
-                </div>
+        <div class="order-1 lg:order-2">
+          <h2 class="text-4xl font-extrabold mb-6">About <span class="text-primary italic">Us</span></h2>
+          <div class="w-20 h-2 bg-primary rounded-full mb-8"></div>
+
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Kenapa Harus Blue Swan?</h3>
+          <p class="text-lg text-gray-700 leading-relaxed mb-6">
+            Blue Swan Coffee is not just a coffee shop; it's a sanctuary for coffee lovers. We believe in the art of
+            brewing, choosing only the finest beans processed with care to ensure every cup tells a story.
+          </p>
+
+          <div class="grid grid-cols-2 gap-6 mt-8">
+            <div class="glass-card p-6 rounded-2xl text-center hover:bg-white/40 transition-colors">
+              <h4 class="text-3xl font-bold text-primary mb-2">100+</h4>
+              <p class="text-sm font-medium">Outlets</p>
             </div>
+            <div class="glass-card p-6 rounded-2xl text-center hover:bg-white/40 transition-colors">
+              <h4 class="text-3xl font-bold text-primary mb-2">5k+</h4>
+              <p class="text-sm font-medium">Happy Customers</p>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-24 px-4 relative overflow-hidden">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="order-2 lg:order-1 relative">
-                <img src="img/About Us.jpg" alt="About Us" class="w-full rounded-[3rem] shadow-xl relative z-10" />
-                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/30 rounded-full blur-2xl z-0"></div>
-            </div>
-            
-            <div class="order-1 lg:order-2">
-                <h2 class="text-4xl font-extrabold mb-6">About <span class="text-primary italic">Us</span></h2>
-                <div class="w-20 h-2 bg-primary rounded-full mb-8"></div>
-                
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">Kenapa Harus Blue Swan?</h3>
-                <p class="text-lg text-gray-700 leading-relaxed mb-6">
-                    Blue Swan Coffee is not just a coffee shop; it's a sanctuary for coffee lovers. We believe in the art of brewing, choosing only the finest beans processed with care to ensure every cup tells a story.
-                </p>
-                
-                <div class="grid grid-cols-2 gap-6 mt-8">
-                    <div class="glass-card p-6 rounded-2xl text-center hover:bg-white/40 transition-colors">
-                        <h4 class="text-3xl font-bold text-primary mb-2">100+</h4>
-                        <p class="text-sm font-medium">Outlets</p>
-                    </div>
-                    <div class="glass-card p-6 rounded-2xl text-center hover:bg-white/40 transition-colors">
-                        <h4 class="text-3xl font-bold text-primary mb-2">5k+</h4>
-                        <p class="text-sm font-medium">Happy Customers</p>
-                    </div>
-                </div>
-            </div>
+  <!-- Menu Teaser Section -->
+  <section id="menu" class="py-24 px-4 bg-white/20 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto text-center">
+      <h2 class="text-4xl font-extrabold mb-4">Our <span class="text-primary italic">Favorites</span></h2>
+      <p class="max-w-2xl mx-auto text-gray-600 mb-16">Curated selection of our most popular drinks and snacks.</p>
+
+      <!-- Horizontal Scroll Snapping for Mobile, Grid for Desktop -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Dynamic Item Loop -->
+        <div th:each="item : ${favorites}"
+          class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl flex flex-col">
+          <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">POPULAR
+          </div>
+
+          <div
+            class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all overflow-hidden relative">
+            <!-- Link to detail page -->
+            <a th:href="@{/menu/{id}(id=${item.id})}">
+              <img src="img/menu/1.jpg" th:src="${item.imageUrl != null ? item.imageUrl : '/img/menu/1.jpg'}"
+                class="w-full h-full object-cover rounded-full transform group-hover:scale-110 transition-transform duration-500"
+                alt="Coffee">
+            </a>
+          </div>
+
+          <div class="flex-grow text-center">
+            <a th:href="@{/menu/{id}(id=${item.id})}">
+              <h3 class="text-xl font-bold mb-2 text-[#1a1a1a] group-hover:text-primary transition-colors"
+                th:text="${item.name}">Espresso</h3>
+            </a>
+            <p class="text-primary font-bold text-lg mb-4" th:text="'IDR ' + ${item.price}">IDR 25K</p>
+          </div>
+
+          <form action="/cart/add" method="post" class="mt-auto">
+            <input type="hidden" name="productId" th:value="${item.id}" />
+            <input type="hidden" name="quantity" value="1" />
+            <button type="submit"
+              class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
+              Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
+            </button>
+          </form>
         </div>
       </div>
-    </section>
 
-    <!-- Menu Teaser Section -->
-    <section id="menu" class="py-24 px-4 bg-white/20 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto text-center">
-        <h2 class="text-4xl font-extrabold mb-4">Our <span class="text-primary italic">Favorites</span></h2>
-        <p class="max-w-2xl mx-auto text-gray-600 mb-16">Curated selection of our most popular drinks and snacks.</p>
+      <div class="mt-12">
+        <a th:href="@{/menu}"
+          class="inline-block border-b-2 border-primary text-primary font-bold text-lg pb-1 hover:text-primary-dark hover:border-primary-dark transition-all">View
+          Full Menu &rarr;</a>
+      </div>
+    </div>
+  </section>
 
-        <!-- Horizontal Scroll Snapping for Mobile, Grid for Desktop -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Dynamic Item Loop -->
-            <div th:each="item : ${favorites}" 
-                 class="glass-card rounded-3xl p-6 relative group transition-all hover:-translate-y-2 hover:shadow-xl flex flex-col">
-                <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">POPULAR</div>
-                
-                <div class="w-40 h-40 mx-auto mb-6 rounded-full p-2 border-2 border-dashed border-primary/30 group-hover:border-primary transition-all overflow-hidden relative">
-                    <!-- Link to detail page -->
-                    <a th:href="@{/menu/{id}(id=${item.id})}">
-                         <img src="img/menu/1.jpg" th:src="${item.imageUrl != null ? item.imageUrl : '/img/menu/1.jpg'}" 
-                              class="w-full h-full object-cover rounded-full transform group-hover:scale-110 transition-transform duration-500" 
-                              alt="Coffee">
-                    </a>
-                </div>
-                
-                <div class="flex-grow text-center">
-                    <a th:href="@{/menu/{id}(id=${item.id})}">
-                        <h3 class="text-xl font-bold mb-2 text-[#1a1a1a] group-hover:text-primary transition-colors" th:text="${item.name}">Espresso</h3>
-                    </a>
-                    <p class="text-primary font-bold text-lg mb-4" th:text="'IDR ' + ${item.price}">IDR 25K</p>
-                </div>
-
-                <form action="/cart/add" method="post" class="mt-auto">
-                    <input type="hidden" name="productId" th:value="${item.id}" /> 
-                    <input type="hidden" name="quantity" value="1" />
-                    <button type="submit" class="w-full py-3 bg-[#1a1a1a] text-white rounded-xl font-semibold hover:bg-primary transition-colors flex items-center justify-center gap-2">
-                        Add to Cart <i data-feather="shopping-cart" class="w-4 h-4"></i>
-                    </button>
-                </form>
-            </div>
+  <!-- Contact & Map Section -->
+  <section id="contact" class="py-24 px-4">
+    <div class="max-w-7xl mx-auto glass-card rounded-[3rem] overflow-hidden shadow-2xl">
+      <div class="grid lg:grid-cols-2">
+        <!-- Map -->
+        <div class="h-[400px] lg:h-auto w-full">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.321560480525!2d107.63086417460649!3d-6.971338193029311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9987158a94d%3A0x7ffde813da94766b!2sBlue%20Swan%20Coffee!5e0!3m2!1sid!2sid!4v1758354209479!5m2!1sid!2sid"
+            width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.2);" allowfullscreen=""
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
-        
-        <div class="mt-12">
-            <a th:href="@{/menu}" class="inline-block border-b-2 border-primary text-primary font-bold text-lg pb-1 hover:text-primary-dark hover:border-primary-dark transition-all">View Full Menu &rarr;</a>
+
+        <!-- Contact Form -->
+        <div class="p-12 bg-white/50 backdrop-blur-md">
+          <h2 class="text-3xl font-extrabold mb-2">Get in <span class="text-primary italic">Touch</span></h2>
+          <p class="text-gray-600 mb-8">We'd love to hear from you. Send us a message!</p>
+
+          <form action="" class="space-y-6">
+            <div class="relative">
+              <i data-feather="user" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+              <input type="text" placeholder="Your Name"
+                class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
+            </div>
+            <div class="relative">
+              <i data-feather="mail" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+              <input type="text" placeholder="Your Email"
+                class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
+            </div>
+            <div class="relative">
+              <i data-feather="phone" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
+              <input type="text" placeholder="Phone Number"
+                class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
+            </div>
+            <button
+              class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+              Send Message
+            </button>
+          </form>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Contact & Map Section -->
-    <section id="contact" class="py-24 px-4">
-        <div class="max-w-7xl mx-auto glass-card rounded-[3rem] overflow-hidden shadow-2xl">
-            <div class="grid lg:grid-cols-2">
-                <!-- Map -->
-                <div class="h-[400px] lg:h-auto w-full">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.321560480525!2d107.63086417460649!3d-6.971338193029311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9987158a94d%3A0x7ffde813da94766b!2sBlue%20Swan%20Coffee!5e0!3m2!1sid!2sid!4v1758354209479!5m2!1sid!2sid" 
-                        width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.2);" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-                
-                <!-- Contact Form -->
-                <div class="p-12 bg-white/50 backdrop-blur-md">
-                    <h2 class="text-3xl font-extrabold mb-2">Get in <span class="text-primary italic">Touch</span></h2>
-                    <p class="text-gray-600 mb-8">We'd love to hear from you. Send us a message!</p>
-                    
-                    <form action="" class="space-y-6">
-                        <div class="relative">
-                            <i data-feather="user" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
-                            <input type="text" placeholder="Your Name" class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
-                        </div>
-                        <div class="relative">
-                            <i data-feather="mail" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
-                            <input type="text" placeholder="Your Email" class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
-                        </div>
-                        <div class="relative">
-                            <i data-feather="phone" class="absolute left-4 top-4 text-gray-400 w-5 h-5"></i>
-                            <input type="text" placeholder="Phone Number" class="w-full pl-12 pr-4 py-4 rounded-xl bg-white/60 border-none focus:ring-2 focus:ring-primary/50 outline-none transition-all placeholder-gray-400 font-medium" />
-                        </div>
-                        <button class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-1">
-                            Send Message
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Footer -->
+  <footer class="bg-[#1a1a1a] text-white pt-20 pb-10 rounded-t-[3rem] mt-10">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold italic text-primary mb-8">Blue Swan Coffee.</h2>
 
-    <!-- Footer -->
-    <footer class="bg-[#1a1a1a] text-white pt-20 pb-10 rounded-t-[3rem] mt-10">
-      <div class="max-w-7xl mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold italic text-primary mb-8">Blue Swan Coffee.</h2>
-        
-        <div class="flex justify-center gap-6 mb-8">
-            <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i data-feather="instagram"></i></a>
-            <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i data-feather="twitter"></i></a>
-            <a href="#" class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i data-feather="facebook"></i></a>
-        </div>
-        
-        <div class="flex flex-wrap justify-center gap-8 mb-12 text-gray-400">
-            <a th:href="@{/}" class="hover:text-primary transition-colors">Home</a>
-            <a href="#about" class="hover:text-primary transition-colors">About</a>
-            <a th:href="@{/menu}" class="hover:text-primary transition-colors">Menu</a>
-            <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
-        </div>
-
-        <div class="border-t border-gray-800 pt-8 text-gray-500 text-sm">
-            <p>Created by <a href="https://github.com/deonaja" class="text-primary hover:underline">deonaja</a>. | &copy; 2023 All rights reserved.</p>
-        </div>
+      <div class="flex justify-center gap-6 mb-8">
+        <a href="#"
+          class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i
+            data-feather="instagram"></i></a>
+        <a href="#"
+          class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i
+            data-feather="twitter"></i></a>
+        <a href="#"
+          class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"><i
+            data-feather="facebook"></i></a>
       </div>
-    </footer>
 
-    <!-- feather icons -->
-    <script>
-      feather.replace();
-    </script>
-    
-    <!-- Scripts -->
-    <script>
-        // Toggle Mobile Menu
-        const mobileMenuBtn = document.getElementById('hamburger-menu');
-        // Add actual mobile menu logic if extending beyond simple display
-        // For now, in a real redesign, we'd add a slide-over mobile menu div.
-        // I will keep it simple for this file replacement to focus on the structure.
-    </script> 
-    <script src="js/script.js"></script>
-  </body>
+      <div class="flex flex-wrap justify-center gap-8 mb-12 text-gray-400">
+        <a th:href="@{/}" class="hover:text-primary transition-colors">Home</a>
+        <a href="#about" class="hover:text-primary transition-colors">About</a>
+        <a th:href="@{/menu}" class="hover:text-primary transition-colors">Menu</a>
+        <a href="#contact" class="hover:text-primary transition-colors">Contact</a>
+      </div>
+
+      <div class="border-t border-gray-800 pt-8 text-gray-500 text-sm">
+        <p>Created by <a href="https://github.com/deonaja" class="text-primary hover:underline">deonaja</a>. | &copy;
+          2023 All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- feather icons -->
+  <script>
+    feather.replace();
+  </script>
+
+  <!-- Scripts -->
+  <script>
+    // Toggle Mobile Menu
+    const mobileMenuBtn = document.getElementById('hamburger-menu');
+    // Add actual mobile menu logic if extending beyond simple display
+    // For now, in a real redesign, we'd add a slide-over mobile menu div.
+    // I will keep it simple for this file replacement to focus on the structure.
+  </script>
+  <script src="js/script.js"></script>
+</body>
+
 </html>

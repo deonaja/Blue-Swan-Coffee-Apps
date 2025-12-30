@@ -130,8 +130,12 @@
             class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
         </a>
 
-        <a th:if="${session.user != null}" th:href="@{/profile}" class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm" title="Profil Saya">
-             <i data-feather="user" class="w-5 h-5"></i>
+        <a th:if="${session.user != null}" th:href="@{/profile}"
+          class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm relative"
+          title="Profil Saya">
+          <i data-feather="user" class="w-5 h-5"></i>
+          <span th:if="${hasUnpaidOrder}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
         </a>
 
         <a th:if="${session.user == null}" th:href="@{/login}"
