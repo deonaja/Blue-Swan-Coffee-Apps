@@ -176,53 +176,26 @@
                 <td class="py-4 px-4 font-bold text-primary" th:text="'IDR ' + ${order.totalAmount}">IDR 50.000</td>
                 <td class="py-4 px-4">
                   <span th:if="${order.status.name() == 'PAID'}"
-                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">QUEUED</span>
-                  <span th:if="${order.status.name() == 'BREWING'}"
-                    class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold flex items-center gap-1 w-fit">
-                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                    BREWING
-                  </span>
-                  <span th:if="${order.status.name() == 'READY'}"
-                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold animate-pulse">☕ READY</span>
-                  <span th:if="${order.status.name() == 'PICKED_UP'}"
-                    class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold">✓ COMPLETED</span>
+                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">PAID</span>
                   <span th:if="${order.status.name() == 'CANCELED'}"
                     class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">CANCELED</span>
                   <span th:if="${order.status.name() == 'CREATED'}"
                     class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">PENDING</span>
                 </td>
                 <td class="py-4 px-4 text-right">
-                  <!-- PENDING: Show PAY button -->
                   <a th:if="${order.status.name() == 'CREATED'}" th:href="@{/payment/{id}(id=${order.id})}"
                     class="inline-block px-4 py-2 bg-primary text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-primary-dark transition-all text-xs">
                     PAY
                   </a>
-                  <!-- PAID/BREWING: Show VIEW button -->
-                  <a th:if="${order.status.name() == 'PAID' or order.status.name() == 'BREWING'}" th:href="@{/payment/{id}(id=${order.id})}"
-                    class="inline-block px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-blue-600 transition-all text-xs">
-                    VIEW
-                  </a>
-                  <!-- READY: Show PICKUP button -->
-                  <a th:if="${order.status.name() == 'READY'}" th:href="@{/payment/{id}(id=${order.id})}"
-                    class="inline-block px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-green-600 transition-all text-xs animate-pulse">
-                    PICKUP
-                  </a>
-                  <!-- PICKED_UP: Show RATE button if not reviewed yet -->
                   <button th:if="${order.status.name() == 'PICKED_UP' and order.review == null}"
                     onclick="openReviewModal(this.getAttribute('data-order-id'))" th:data-order-id="${order.id}"
                     class="inline-block px-4 py-2 bg-yellow-500 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-yellow-600 transition-all text-xs">
                     RATE
                   </button>
-                  <!-- PICKED_UP: Show RATED if already reviewed -->
-                  <span th:if="${order.status.name() == 'PICKED_UP' and order.review != null}"
+                  <span th:if="${order.review != null}"
                     class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-bold">
                     RATED <i data-feather="check" class="w-3 h-3"></i>
                   </span>
-                  <!-- CANCELED: Show nothing or reorder -->
-                  <a th:if="${order.status.name() == 'CANCELED'}" th:href="@{/menu}"
-                    class="inline-block px-4 py-2 bg-gray-500 text-white font-bold rounded-lg shadow-sm hover:shadow-md hover:bg-gray-600 transition-all text-xs">
-                    REORDER
-                  </a>
                 </td>
               </tr>
               <tr th:if="${#lists.isEmpty(orders)}">
@@ -310,47 +283,23 @@
       modal.classList.remove('flex');
     }
 
-    // Star rating interaction - fill all stars up to selected value
-    const ratingContainer = document.querySelector('.flex.gap-4.justify-center');
-    if (ratingContainer) {
-      const labels = ratingContainer.querySelectorAll('label');
-      
-      // Function to update star display
-      function updateStars(selectedValue) {
-        labels.forEach((label, index) => {
-          const svg = label.querySelector('svg');
-          if (svg) {
-            if (index < selectedValue) {
-              svg.classList.add('text-yellow-400');
-              svg.classList.remove('text-gray-300');
-              svg.style.fill = '#facc15'; // yellow-400
-            } else {
-              svg.classList.remove('text-yellow-400');
-              svg.classList.add('text-gray-300');
-              svg.style.fill = 'none';
-            }
+    // Star rating interaction (simple visual hack for radio buttons)
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const val = this.value;
+        const container = this.closest('.flex');
+        const stars = container.querySelectorAll('i');
+        stars.forEach((star, index) => {
+          if (index < val) {
+            star.classList.add('text-yellow-400', 'fill-yellow-400');
+            star.classList.remove('text-gray-300');
+          } else {
+            star.classList.remove('text-yellow-400', 'fill-yellow-400');
+            star.classList.add('text-gray-300');
           }
         });
-      }
-      
-      // Handle click/change
-      document.querySelectorAll('input[name="rating"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-          updateStars(parseInt(this.value));
-        });
       });
-      
-      // Handle hover preview
-      labels.forEach((label, index) => {
-        label.addEventListener('mouseenter', () => {
-          updateStars(index + 1);
-        });
-        label.addEventListener('mouseleave', () => {
-          const checked = document.querySelector('input[name="rating"]:checked');
-          updateStars(checked ? parseInt(checked.value) : 0);
-        });
-      });
-    }
+    });
   </script>
 </body>
 
