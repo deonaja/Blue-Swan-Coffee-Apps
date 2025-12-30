@@ -70,13 +70,14 @@ public class PaymentController {
         try {
             Payment payment = paymentService.processPayment(orderId);
             if (payment.getPaymentStatus() == PaymentStatus.SUCCESS) {
-                return "redirect:/profile?success";
+                // Redirect to order details to see status tracking
+                return "redirect:/orders/" + orderId + "/details";
             } else {
-                return "redirect:/profile?error=expired";
+                return "redirect:/payment/" + orderId + "?error=expired";
             }
         } catch (RuntimeException e) {
-            // Handle cases like already paid or logic errors
-            return "redirect:/profile?error=" + e.getMessage();
+            // Stay on payment page with error
+            return "redirect:/payment/" + orderId + "?error=" + e.getMessage();
         }
     }
 }
