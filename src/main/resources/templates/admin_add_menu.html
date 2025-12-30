@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Menu - Blue Swan Coffee</title>
+    <title>Manage Menu - Blue Swan Coffee</title>
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
     <!-- Fonts -->
@@ -122,7 +122,7 @@
         <div class="text-center mb-8">
             <span
                 class="inline-block py-1 px-3 rounded-full bg-white/40 border border-white/50 text-primary font-bold text-sm mb-4 tracking-wide">MANAGEMENT</span>
-            <h1 class="text-4xl font-extrabold text-[#1a1a1a]">Add New <span class="text-primary italic">Menu
+            <h1 class="text-4xl font-extrabold text-[#1a1a1a]">Manage <span class="text-primary italic">Menu
                     Item</span></h1>
         </div>
 
@@ -137,6 +137,7 @@
 
                     <!-- Name -->
                     <div>
+                        <input type="hidden" th:field="*{id}" />
                         <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Item Name</label>
                         <input type="text" id="name" th:field="*{name}" required
                             class="form-input w-full px-5 py-3 rounded-xl text-gray-800 placeholder-gray-400"
@@ -213,6 +214,68 @@
                     </div>
 
                 </form>
+            </div>
+
+            <!-- Existing Menu List -->
+            <div class="mt-16 max-w-7xl mx-auto">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-extrabold text-[#1a1a1a]">Existing <span class="text-primary italic">Menu
+                            Items</span></h2>
+                    <p class="text-gray-600 mt-2">Manage your current menu offerings</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card Item -->
+                    <div th:each="item : ${menuList}"
+                        class="glass-card rounded-[2rem] p-6 relative group transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl flex flex-col">
+                        <!-- Image -->
+                        <div class="relative w-full aspect-square mb-6 rounded-[1.5rem] overflow-hidden">
+                            <img th:src="${item.imageUrl}" alt="Menu Image"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                            <!-- Category Badge -->
+                            <span
+                                class="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm tracking-wider"
+                                th:text="${item.category}">CATEGORY</span>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="flex-grow">
+                            <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2 leading-tight" th:text="${item.name}">Menu
+                                Name</h3>
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-4 h-10" th:text="${item.description}">
+                                Description goes here...</p>
+                        </div>
+
+                        <!-- Footer (Price + Actions) -->
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-white/40">
+                            <span class="text-xl font-extrabold text-primary"
+                                th:text="'Rp ' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')}">Rp
+                                25,000</span>
+
+                            <div class="flex gap-2">
+                                <a th:href="@{/admin/menu/edit/{id}(id=${item.id})}"
+                                    class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-md group/edit"
+                                    title="Edit">
+                                    <i data-feather="edit-2"
+                                        class="w-4 h-4 transition-transform group-hover/edit:scale-110"></i>
+                                </a>
+                                <a th:href="@{/admin/menu/delete/{id}(id=${item.id})}"
+                                    onclick="return confirm('Are you sure you want to delete this menu item?');"
+                                    class="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-md group/delete"
+                                    title="Delete">
+                                    <i data-feather="trash-2"
+                                        class="w-4 h-4 transition-transform group-hover/delete:scale-110"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(menuList)}" class="text-center py-12 glass-card rounded-2xl">
+                    <i data-feather="coffee" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                    <p class="text-gray-500 text-lg">No menu items found. Start adding some!</p>
+                </div>
             </div>
 
             <div class="text-center mt-6">

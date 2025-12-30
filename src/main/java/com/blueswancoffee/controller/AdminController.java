@@ -9,8 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,7 +39,34 @@ public class AdminController {
         }
         model.addAttribute("user", user);
         model.addAttribute("menuItem", new MenuItem());
+        model.addAttribute("menuList", menuItemRepository.findAll());
         return "admin_add_menu";
+    }
+
+    @GetMapping("/menu/edit/{id}")
+    public String editMenuPage(@PathVariable("id") UUID id, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"ADMIN".equals(user.getRole())) {
+            return "redirect:/login";
+        }
+        MenuItem menuItem = menuItemRepository.findById(id).orElse(null);
+        if (menuItem == null) {
+            return "redirect:/admin/menu/add";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("menuItem", menuItem);
+        model.addAttribute("menuList", menuItemRepository.findAll());
+        return "admin_add_menu";
+    }
+
+    @GetMapping("/menu/delete/{id}")
+    public String deleteMenu(@PathVariable("id") UUID id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"ADMIN".equals(user.getRole())) {
+            return "redirect:/login";
+        }
+        menuItemRepository.deleteById(id);
+        return "redirect:/admin/menu/add";
     }
 
     @GetMapping("/reports")
@@ -62,6 +91,6 @@ public class AdminController {
         }
 
         menuItemRepository.save(menuItem);
-        return "redirect:/admin/dashboard";
+        return "redirect:/admin/menu/add";
     }
 }
