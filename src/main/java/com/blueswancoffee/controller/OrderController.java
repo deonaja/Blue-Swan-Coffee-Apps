@@ -120,4 +120,27 @@ public class OrderController {
         model.addAttribute("order", order);
         return "order-detail";
     }
+
+    // REST API to check order status (for AJAX polling)
+    @GetMapping("/api/orders/{id}/status")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.Map<String, Object> getOrderStatus(@PathVariable UUID id, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return java.util.Map.of("error", "Unauthorized");
+        }
+
+        Order order = orderRepository.findByIdWithDetails(id).orElse(null);
+        if (order == null || !order.getUser().getId().equals(user.getId())) {
+            return java.util.Map.of("error", "Not found");
+        }
+
+        java.util.Map<String, Object> result = new java.util.HashMap<>();
+        result.put("status", order.getStatus().name());
+        result.put("pickupCode", order.getPickupCode());
+        if (order.getBarista() != null) {
+            result.put("baristaName", order.getBarista().getName());
+        }
+        return result;
+    }
 }

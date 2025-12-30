@@ -4,76 +4,303 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Details - Blue Swan Coffee</title>
+    <title>Order Tracking - Blue Swan Coffee</title>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <script>
-        tailwind.config = { theme: { extend: { colors: { primary: '#4a6fa5', bg: '#d9c6b0' }, fontFamily: { sans: ['Poppins', 'sans-serif'] } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        primary: '#4a6fa5', 
+                        'primary-light': '#6b8fc5',
+                        'primary-dark': '#355a8c',
+                        bg: '#d9c6b0',
+                        accent: '#d9c6b0'
+                    }, 
+                    fontFamily: { 
+                        sans: ['Poppins', 'sans-serif'] 
+                    } 
+                } 
+            } 
+        }
     </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+        
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(74, 111, 165, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(74, 111, 165, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(74, 111, 165, 0); }
+        }
+        .pulse-ring { animation: pulse-ring 2s infinite; }
+        
+        @keyframes coffee-steam {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
+            50% { transform: translateY(-5px) scale(1.1); opacity: 1; }
+        }
+        .coffee-steam { animation: coffee-steam 2s ease-in-out infinite; }
+        
+        @keyframes checkmark-bounce {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(0.95); }
+            75% { transform: scale(1.1); }
+        }
+        .checkmark-bounce { animation: checkmark-bounce 2s ease-in-out infinite; }
+        
+        @keyframes success-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(74, 111, 165, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(74, 111, 165, 0.6); }
+        }
+        .success-glow { animation: success-glow 2s ease-in-out infinite; }
+    </style>
 </head>
 
-<body class="bg-bg text-[#1a1a1a] font-sans min-h-screen p-4 flex items-center justify-center">
+<body class="bg-bg text-[#1a1a1a] font-sans min-h-screen py-8 px-4 relative overflow-x-hidden">
 
-    <div class="max-w-2xl w-full bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-8">
+    <!-- Background Blobs -->
+    <div class="blob bg-primary w-[300px] h-[300px] rounded-full top-[-100px] left-[-100px] fixed"></div>
+    <div class="blob bg-white w-[400px] h-[400px] rounded-full bottom-[-150px] right-[-150px] fixed" style="animation-delay: 2s;"></div>
+
+    <div class="max-w-2xl w-full mx-auto glass-card rounded-3xl shadow-2xl p-8 relative z-10">
+        <!-- Header -->
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold">Order Details</h1>
-            <a href="/profile" class="p-2 hover:bg-gray-100 rounded-full"><i data-feather="x"></i></a>
-        </div>
-
-        <div class="flex justify-between items-center mb-6 bg-blue-50 p-4 rounded-xl border border-blue-100">
             <div>
-                <p class="text-xs text-gray-500 uppercase">Order ID</p>
-                <p class="font-mono font-bold text-primary" th:text="${'#' + order.id}">#UUID-FULL</p>
+                <h1 class="text-2xl font-bold text-primary">Order Tracking</h1>
+                <p class="text-sm text-gray-500" th:text="'#' + ${#strings.substring(order.id.toString(),0,8)}">#UUID</p>
             </div>
-            <div class="text-right">
-                <p class="text-xs text-gray-500 uppercase">Date</p>
-                <p class="font-bold" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy HH:mm')}">Oct 20</p>
+            <a href="/profile" class="p-2 hover:bg-primary/10 rounded-full transition-colors text-primary"><i data-feather="x"></i></a>
+        </div>
+
+        <!-- Progress Timeline -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between relative">
+                <!-- Step 1: Order Created -->
+                <div class="flex flex-col items-center z-10">
+                    <div th:class="${order.status.name() != 'CANCELED'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg' : 'w-10 h-10 rounded-full flex items-center justify-center bg-red-500 text-white shadow-lg'">
+                        <i data-feather="shopping-bag" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs mt-2 font-medium text-gray-600">Order</span>
+                </div>
+                
+                <!-- Line 1-2 (PRIMARY) -->
+                <div class="flex-1 h-1 mx-2" th:classappend="${order.status.name() == 'PAID' or order.status.name() == 'BREWING' or order.status.name() == 'READY' or order.status.name() == 'PICKED_UP'} ? 'bg-primary' : 'bg-gray-300'"></div>
+                
+                <!-- Step 2: Queue (PRIMARY) -->
+                <div class="flex flex-col items-center z-10">
+                    <div th:classappend="${order.status.name() == 'PAID'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg animate-pulse' : (${order.status.name() == 'BREWING' or order.status.name() == 'READY' or order.status.name() == 'PICKED_UP'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg' : 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-500')">
+                        <i data-feather="inbox" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs mt-2 font-medium text-gray-600">Queue</span>
+                </div>
+                
+                <!-- Line 2-3 (PRIMARY) -->
+                <div class="flex-1 h-1 mx-2" th:classappend="${order.status.name() == 'BREWING' or order.status.name() == 'READY' or order.status.name() == 'PICKED_UP'} ? 'bg-primary' : 'bg-gray-300'"></div>
+                
+                <!-- Step 3: Brewing (PRIMARY) -->
+                <div class="flex flex-col items-center z-10">
+                    <div th:classappend="${order.status.name() == 'BREWING'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg coffee-steam' : (${order.status.name() == 'READY' or order.status.name() == 'PICKED_UP'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg' : 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-500')">
+                        <i data-feather="coffee" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs mt-2 font-medium text-gray-600">Brewing</span>
+                </div>
+                
+                <!-- Line 3-4 (PRIMARY) -->
+                <div class="flex-1 h-1 mx-2" th:classappend="${order.status.name() == 'READY' or order.status.name() == 'PICKED_UP'} ? 'bg-primary' : 'bg-gray-300'"></div>
+                
+                <!-- Step 4: Ready (PRIMARY) -->
+                <div class="flex flex-col items-center z-10">
+                    <div th:classappend="${order.status.name() == 'READY'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg pulse-ring-green' : (${order.status.name() == 'PICKED_UP'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg' : 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-500')">
+                        <i data-feather="bell" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs mt-2 font-medium text-gray-600">Ready</span>
+                </div>
+                
+                <!-- Line 4-5 (PRIMARY) -->
+                <div class="flex-1 h-1 mx-2" th:classappend="${order.status.name() == 'PICKED_UP'} ? 'bg-primary' : 'bg-gray-300'"></div>
+                
+                <!-- Step 5: Completed (PRIMARY) -->
+                <div class="flex flex-col items-center z-10">
+                    <div th:classappend="${order.status.name() == 'PICKED_UP'} ? 'w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white shadow-lg checkmark-bounce' : 'w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 text-gray-500'">
+                        <i data-feather="check-circle" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xs mt-2 font-medium text-gray-600">Done</span>
+                </div>
             </div>
         </div>
 
-        <h3 class="font-bold text-gray-500 text-sm uppercase mb-3">Items Ordered</h3>
-        <div class="space-y-3 mb-8 max-h-[400px] overflow-y-auto">
-            <div th:each="item : ${order.items}"
-                class="flex gap-4 p-3 bg-white rounded-xl shadow-sm border border-gray-100">
-                <div class="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                    <img th:if="${item.product.imageUrl != null}" th:src="${item.product.imageUrl}"
-                        class="w-full h-full object-cover">
-                    <div th:if="${item.product.imageUrl == null}"
-                        class="w-full h-full flex items-center justify-center text-gray-400"><i
-                            data-feather="coffee"></i></div>
+        <!-- Status Detail Card -->
+        <div id="status-container" class="mb-6">
+            <!-- Status: CREATED -->
+            <div th:if="${order.status.name() == 'CREATED'}" class="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-500 shadow-lg">
+                    <i data-feather="clock" class="w-10 h-10"></i>
                 </div>
-                <div class="flex-grow">
-                    <h4 class="font-bold" th:text="${item.product.name}">Product Name</h4>
-                    <p class="text-sm text-gray-500" th:text="${item.product.category}">Category</p>
-                    <div class="flex justify-between mt-1">
-                        <span class="text-xs font-bold bg-gray-100 px-2 py-1 rounded text-gray-600"
-                            th:text="${item.quantity + 'x'}">2x</span>
-                        <span class="font-bold text-primary" th:text="${item.subtotal}">50000</span>
+                <h4 class="text-2xl font-bold text-amber-700 mb-2">Awaiting Payment</h4>
+                <p class="text-amber-600 mb-4">Complete payment to start your order</p>
+                <a th:href="@{/payment/{id}(id=${order.id})}"
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-primary to-primary-dark text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                    <i data-feather="credit-card" class="w-5 h-5"></i> PAY NOW
+                </a>
+            </div>
+
+            <!-- Status: PAID / Queue (BLUE - matching barista incoming) -->
+            <div th:if="${order.status.name() == 'PAID'}" class="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600 shadow-lg animate-pulse">
+                    <i data-feather="inbox" class="w-10 h-10"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-blue-700 mb-2">In Queue</h4>
+                <p class="text-blue-600 mb-2">Your order is waiting for barista</p>
+                <p class="text-sm text-blue-400">Est. wait time: 5-10 minutes</p>
+            </div>
+
+            <!-- Status: BREWING (YELLOW - matching barista brewing) -->
+            <div th:if="${order.status.name() == 'BREWING'}" class="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-yellow-600 coffee-steam">
+                    <i data-feather="coffee" class="w-10 h-10"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-yellow-700 mb-2">Brewing Your Coffee</h4>
+                <p class="text-yellow-600 mb-4">Our barista is crafting your order with care</p>
+                
+                <!-- Barista Info -->
+                <div th:if="${order.barista != null}" class="bg-white/60 rounded-xl p-4 inline-flex items-center gap-3">
+                    <div class="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center text-yellow-700">
+                        <i data-feather="user" class="w-5 h-5"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500">Your Barista</p>
+                        <p class="font-bold text-yellow-700" th:text="${order.barista.name}">Barista Name</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Status: READY (GREEN - matching barista ready) -->
+            <div th:if="${order.status.name() == 'READY'}" class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-600 shadow-lg pulse-ring-green">
+                    <i data-feather="coffee" class="w-10 h-10"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-green-700 mb-2">Order Ready!</h4>
+                <p class="text-green-600 mb-4">Pick up at the counter</p>
+                <div class="bg-white border-2 border-green-300 rounded-2xl p-6 inline-block shadow-lg">
+                    <p class="text-xs text-green-600 mb-2 uppercase tracking-wider">Pickup Code</p>
+                    <p class="text-5xl font-mono font-bold text-green-700 tracking-[0.3em]" th:text="${order.pickupCode}">XXXX</p>
+                </div>
+                <p class="text-sm text-green-500 mt-4">Show this code to the barista</p>
+                
+                <!-- Barista Info -->
+                <div th:if="${order.barista != null}" class="mt-4 bg-white/60 rounded-xl p-3 inline-flex items-center gap-3">
+                    <div class="w-8 h-8 bg-green-200 rounded-full flex items-center justify-center text-green-700">
+                        <i data-feather="user" class="w-4 h-4"></i>
+                    </div>
+                    <p class="text-sm"><span class="text-gray-500">Made by</span> <span class="font-bold text-green-700" th:text="${order.barista.name}">Barista</span></p>
+                </div>
+            </div>
+
+            <!-- Status: PICKED_UP / Completed (PRIMARY with animation) -->
+            <div th:if="${order.status.name() == 'PICKED_UP'}" class="bg-gradient-to-r from-primary/10 to-primary/20 border border-primary/30 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4 text-primary shadow-lg success-glow">
+                    <i data-feather="check" class="w-10 h-10 checkmark-bounce"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-primary mb-2">Order Completed</h4>
+                <p class="text-primary-dark">Thank you! Enjoy your coffee</p>
+                
+                <!-- Barista Info -->
+                <div th:if="${order.barista != null}" class="mt-4 bg-white/60 rounded-xl p-3 inline-flex items-center gap-3">
+                    <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary">
+                        <i data-feather="user" class="w-4 h-4"></i>
+                    </div>
+                    <p class="text-sm"><span class="text-gray-500">Made by</span> <span class="font-bold text-primary" th:text="${order.barista.name}">Barista</span></p>
+                </div>
+            </div>
+
+            <!-- Status: CANCELED -->
+            <div th:if="${order.status.name() == 'CANCELED'}" class="bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-2xl p-6 text-center">
+                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 shadow-lg">
+                    <i data-feather="x" class="w-10 h-10"></i>
+                </div>
+                <h4 class="text-2xl font-bold text-red-700 mb-2">Order Canceled</h4>
+                <p class="text-red-600">This order has been canceled or expired</p>
+            </div>
         </div>
 
-        <div class="flex justify-between items-center pt-4 border-t-2 border-dashed border-gray-300 mb-6">
-            <span class="text-lg font-bold">Total Amount</span>
-            <span class="text-3xl font-bold text-primary" th:text="${order.totalAmount}">150000</span>
+        <!-- Order Items (Collapsible) -->
+        <details class="mb-6 group">
+            <summary class="flex items-center justify-between cursor-pointer bg-white/50 rounded-xl p-4 hover:bg-white/70 transition-colors">
+                <span class="font-bold text-gray-700 flex items-center gap-2">
+                    <i data-feather="shopping-bag" class="w-5 h-5 text-primary"></i>
+                    Order Items
+                    <span class="text-sm font-normal text-gray-500" th:text="'(' + ${#lists.size(order.items)} + ' items)'"></span>
+                </span>
+                <i data-feather="chevron-down" class="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <div class="mt-3 space-y-2 max-h-[250px] overflow-y-auto">
+                <div th:each="item : ${order.items}"
+                    class="flex gap-3 p-3 bg-white/80 rounded-xl">
+                    <div class="w-14 h-14 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                        <img th:if="${item.product.imageUrl != null}" th:src="${item.product.imageUrl}"
+                            class="w-full h-full object-cover">
+                        <div th:if="${item.product.imageUrl == null}"
+                            class="w-full h-full flex items-center justify-center text-gray-400"><i data-feather="coffee" class="w-6 h-6"></i></div>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <h4 class="font-bold text-sm truncate" th:text="${item.product.name}">Product</h4>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600" th:text="${item.quantity + 'x'}">1x</span>
+                            <span class="font-bold text-primary text-sm" th:text="'IDR ' + ${item.subtotal}">50000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- Total -->
+        <div class="flex justify-between items-center p-4 bg-primary/10 rounded-2xl mb-6">
+            <span class="font-bold text-gray-700">Total</span>
+            <span class="text-2xl font-bold text-primary" th:text="'IDR ' + ${order.totalAmount}">150000</span>
         </div>
 
-        <div class="grid gap-2">
-            <a th:if="${order.status.name() == 'CREATED'}" th:href="@{/payment/{id}(id=${order.id})}"
-                class="block w-full text-center py-3 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary-dark transition-colors">
-                PROCEED TO PAYMENT
-            </a>
-            <a href="/profile"
-                class="block w-full text-center py-3 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-colors">
-                BACK TO PROFILE
-            </a>
+        <!-- Order Info -->
+        <div class="flex justify-between text-sm text-gray-500 mb-6">
+            <span th:text="'Ordered: ' + ${#temporals.format(order.createdAt, 'dd MMM yyyy, HH:mm')}">Date</span>
         </div>
+
+        <!-- Back Button -->
+        <a href="/profile"
+            class="block w-full text-center py-3 bg-primary/20 text-primary font-bold rounded-xl hover:bg-primary/30 transition-colors">
+            <i data-feather="arrow-left" class="w-4 h-4 inline mr-2"></i>Back to Profile
+        </a>
     </div>
 
     <script>feather.replace()</script>
+    
+    <!-- Auto-refresh for active statuses -->
+    <script th:if="${order.status.name() == 'PAID' or order.status.name() == 'BREWING' or order.status.name() == 'READY'}" th:inline="javascript">
+        // Auto-refresh every 5 seconds to check for status updates
+        setTimeout(() => {
+            window.location.reload();
+        }, 5000);
+    </script>
 </body>
 
 </html>

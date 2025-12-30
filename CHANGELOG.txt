@@ -105,19 +105,30 @@ B. Tampilan (Frontend)
      - Update item total dan cart total tanpa refresh halaman.
      - Visual feedback (opacity) saat loading.
 
-7. ORDER STATUS SYNC DENGAN BARISTA (29 DESEMBER 2025)
+7. ORDER STATUS SYNC DENGAN BARISTA (30 DESEMBER 2025)
 ------------------------------------------------------
-A. Tampilan (Frontend)
+A. Pengendali (Controller)
+   - [UBAH] PaymentController:
+     - Setelah "I Have Paid" sukses → redirect ke Order Details (/orders/{id}/details).
+     - Halaman payment hanya untuk status CREATED (QR + countdown).
+
+B. Tampilan (Frontend)
    - [UBAH] payment.html:
-     - Tambah status BREWING dengan animasi spinner dan ikon kopi.
-     - Tambah status READY dengan pickup code display.
-     - Tambah status PICKED_UP sebagai completed.
-     - Setiap status memiliki UI yang berbeda dan informatif.
+     - Hanya untuk pembayaran (status CREATED).
+     - Menampilkan QR Code dan countdown timer.
+   - [UBAH] order-detail.html:
+     - Halaman tracking status order setelah pembayaran.
+     - Status PAID/QUEUED: Menunggu barista, dengan spinner.
+     - Status BREWING: Animasi ☕ + spinner, "sedang dibuat".
+     - Status READY: Pickup code display + animasi pulse.
+     - Status PICKED_UP: Completed, terima kasih.
+     - Status CANCELED: Order dibatalkan/expired.
+     - Auto-refresh setiap 5 detik untuk status aktif.
    - [UBAH] profile.html:
      - Tambah badge status: QUEUED, BREWING (animasi), READY (pulse), COMPLETED.
      - Action button sesuai status:
        - PENDING → PAY
-       - PAID/BREWING → VIEW
-       - READY → PICKUP (animasi pulse)
+       - PAID/BREWING → VIEW (ke order-detail)
+       - READY → PICKUP (ke order-detail)
        - PICKED_UP → RATE atau RATED
        - CANCELED → REORDER
