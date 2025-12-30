@@ -1,8 +1,10 @@
 package com.blueswancoffee.controller;
 
 import com.blueswancoffee.model.Order;
-import com.blueswancoffee.model.User;
 
+import com.blueswancoffee.model.Payment;
+import com.blueswancoffee.model.PaymentStatus;
+import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.OrderRepository;
 import com.blueswancoffee.service.PaymentService;
 import jakarta.servlet.http.HttpSession;
@@ -66,12 +68,15 @@ public class PaymentController {
         }
 
         try {
-            paymentService.processPayment(orderId);
-            // Stay on payment page to see updated status
-            return "redirect:/payment/" + orderId;
+            Payment payment = paymentService.processPayment(orderId);
+                if (payment.getPaymentStatus() == PaymentStatus.SUCCESS) {
+                return "redirect:/profile?success";
+            } else {
+                return "redirect:/profile?error=expired";
+            }
         } catch (RuntimeException e) {
-            // Stay on payment page even on error
-            return "redirect:/payment/" + orderId;
+             // Handle cases like already paid or logic errors
+             return "redirect:/profile?error=" + e.getMessage();
         }
     }
 }

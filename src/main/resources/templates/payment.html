@@ -150,13 +150,7 @@
                       <div class="flex justify-between items-center py-3 border-b border-gray-300/50">
                           <span class="text-gray-600">Status</span>
                           <span th:if="${order.status.name() == 'CREATED'}" class="badge bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-bold text-sm">WAITING FOR PAYMENT</span>
-                          <span th:if="${order.status.name() == 'PAID'}" class="badge bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold text-sm">PAID - QUEUED</span>
-                          <span th:if="${order.status.name() == 'BREWING'}" class="badge bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-bold text-sm flex items-center gap-1">
-                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                            BREWING
-                          </span>
-                          <span th:if="${order.status.name() == 'READY'}" class="badge bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold text-sm">☕ READY FOR PICKUP</span>
-                          <span th:if="${order.status.name() == 'PICKED_UP'}" class="badge bg-gray-100 text-gray-800 px-3 py-1 rounded-full font-bold text-sm">✓ COMPLETED</span>
+                          <span th:if="${order.status.name() == 'PAID'}" class="badge bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold text-sm">PAID</span>
                           <span th:if="${order.status.name() == 'CANCELED'}" class="badge bg-red-100 text-red-800 px-3 py-1 rounded-full font-bold text-sm">CANCELED</span>
                       </div>
 
@@ -188,6 +182,8 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" 
                              class="w-full h-full object-contain mix-blend-multiply opacity-90 group-hover:opacity-100 transition-opacity" 
                              alt="QR Code" />
+                        <!-- Scan line animation -->
+                        <div class="absolute top-0 left-0 w-full h-1 bg-red-500 opacity-50 shadow-[0_0_10px_red] animate-[scan_2s_linear_infinite]"></div>
                     </div>
 
                     <style>
@@ -213,56 +209,13 @@
                     </form>
                 </div>
 
-                <!-- CONDITION: PAID (Queued for brewing) -->
+                <!-- CONDITION: PAID (Success) -->
                 <div th:if="${order.status.name() == 'PAID'}" class="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
-                    <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-6 text-blue-500 shadow-lg">
-                        <i data-feather="clock" class="w-12 h-12"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Payment Successful!</h3>
-                    <p class="text-gray-600 mb-4">Your order is in queue.</p>
-                    <p class="text-sm text-gray-500 mb-4">Waiting for barista to start brewing...</p>
-                    <div class="flex items-center gap-2 text-blue-500 text-sm">
-                        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                        <span>Auto-refreshing...</span>
-                    </div>
-                </div>
-
-                <!-- CONDITION: BREWING (Coffee being made) -->
-                <div th:if="${order.status.name() == 'BREWING'}" class="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
-                    <div class="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mb-6 text-amber-600 shadow-lg relative">
-                        <span class="text-5xl">☕</span>
-                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center animate-pulse">
-                            <svg class="w-4 h-4 text-white animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Brewing Your Coffee...</h3>
-                    <p class="text-gray-600 mb-8">Please wait, our barista is preparing your order with love ❤️</p>
-                    <div class="w-full bg-amber-100 rounded-xl p-4 text-center">
-                        <p class="text-sm text-amber-800">Your coffee will be ready soon!</p>
-                    </div>
-                </div>
-
-                <!-- CONDITION: READY (Ready for pickup) -->
-                <div th:if="${order.status.name() == 'READY'}" class="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
-                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 text-green-500 shadow-lg animate-bounce">
-                        <i data-feather="check-circle" class="w-12 h-12"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Your Order is Ready!</h3>
-                    <p class="text-gray-600 mb-4">Please pick up your order at the counter.</p>
-                    <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6 mb-6 w-full text-center">
-                        <p class="text-sm text-green-600 mb-2">Your Pickup Code</p>
-                        <p class="text-4xl font-mono font-bold text-green-700 tracking-widest" th:text="${order.pickupCode}">XXXX</p>
-                    </div>
-                    <p class="text-sm text-gray-500">Show this code to the barista</p>
-                </div>
-
-                <!-- CONDITION: PICKED_UP (Completed) -->
-                <div th:if="${order.status.name() == 'PICKED_UP'}" class="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
-                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6 text-gray-500 shadow-lg">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 text-green-500 shadow-lg">
                         <i data-feather="check" class="w-12 h-12"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Order Completed</h3>
-                    <p class="text-gray-600 mb-8">Thank you for your order! Enjoy your coffee ☕</p>
+                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Payment Successful!</h3>
+                    <p class="text-gray-600 mb-8">Thank you, your order is being processed.</p>
                     <a href="/menu" class="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary-dark transition-colors">
                         Order Again
                     </a>
@@ -273,8 +226,8 @@
                      <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-6 text-red-500 shadow-lg">
                         <i data-feather="x" class="w-12 h-12"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Order Canceled</h3>
-                    <p class="text-gray-600 mb-8">This order has been canceled or the payment time has expired.</p>
+                    <h3 class="text-2xl font-bold text-[#1a1a1a] mb-2">Payment Failed</h3>
+                    <p class="text-gray-600 mb-8">Sorry, this order has been canceled or the payment time has expired.</p>
                     <a href="/menu" class="px-8 py-3 bg-[#1a1a1a] text-white font-bold rounded-xl shadow-md hover:bg-gray-800 transition-colors">
                         Back to Menu
                     </a>
@@ -289,7 +242,6 @@
       feather.replace();
     </script>
 
-    <!-- Auto-refresh for CREATED status (countdown timer) -->
     <script th:if="${order.status.name() == 'CREATED'}" th:inline="javascript">
         /*<![CDATA[*/
         // Get deadline from backend (Epoch Millis)
@@ -323,21 +275,6 @@
 
         const timerInterval = setInterval(updateTimer, 1000);
         updateTimer(); // run immediately
-        /*]]>*/
-    </script>
-
-    <!-- Auto-refresh for statuses that can change (PAID, BREWING, READY) -->
-    <script th:if="${order.status.name() == 'PAID' or order.status.name() == 'BREWING' or order.status.name() == 'READY'}" th:inline="javascript">
-        /*<![CDATA[*/
-        // Auto-refresh every 5 seconds to check for status updates from barista
-        const currentStatus = /*[[${order.status.name()}]]*/ '';
-        
-        console.log('Order status: ' + currentStatus + ' - Auto-refresh enabled');
-        
-        // Refresh page every 5 seconds to check for updates
-        setInterval(() => {
-            window.location.reload();
-        }, 5000);
         /*]]>*/
     </script>
   </body>

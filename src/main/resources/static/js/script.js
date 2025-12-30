@@ -65,47 +65,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalContent = submitBtn.innerHTML;
             
-            // Loading State - detect button type
-            const isRoundButton = submitBtn.classList.contains('rounded-full') && submitBtn.classList.contains('w-12');
+            // Loading State
             submitBtn.disabled = true;
-            if (isRoundButton) {
-                // Menu page: just spinner icon
-                submitBtn.innerHTML = '<i data-feather="loader" class="w-6 h-6 animate-spin"></i>';
-            } else {
-                // Detail page: spinner with text
-                submitBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Adding...';
-            }
+            submitBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin"></i> Adding...';
             feather.replace();
 
             try {
                 const formData = new FormData(form);
-                
-                // Add minimum delay so loading animation is visible
-                const [response] = await Promise.all([
-                    fetch('/cart/add', {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: formData
-                    }),
-                    new Promise(resolve => setTimeout(resolve, 500)) // minimum 500ms delay
-                ]);
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
 
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        // Success Feedback - check if it's a round button (menu page) or text button
-                        const isRoundButton = submitBtn.classList.contains('rounded-full') && submitBtn.classList.contains('w-12');
-                        if (isRoundButton) {
-                            // Menu page: just show checkmark icon
-                            submitBtn.innerHTML = '<i data-feather="check" class="w-6 h-6"></i>';
-                        } else {
-                            // Detail page: show "Added" text with checkmark
-                            submitBtn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> Added';
-                        }
+                        // Success Feedback
+                        submitBtn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> Added';
                         feather.replace();
-                        submitBtn.classList.add('bg-primary', 'text-white');
+                        submitBtn.classList.add('bg-green-500', 'text-white');
                         submitBtn.classList.remove('bg-[#1a1a1a]');
                         submitBtn.disabled = false; // Enable again to allow adding more
 
@@ -132,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         setTimeout(() => {
                             submitBtn.innerHTML = originalContent;
                             submitBtn.disabled = false;
-                            submitBtn.classList.remove('bg-primary');
+                            submitBtn.classList.remove('bg-green-500');
                             submitBtn.classList.add('bg-[#1a1a1a]');
                             feather.replace();
                         }, 2000);
@@ -146,124 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = false;
                 feather.replace();
             }
-        });
-    });
-
-    // AJAX Toggle Favorite Logic
-    const favoriteBtns = document.querySelectorAll('.favorite-btn');
-    favoriteBtns.forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const itemId = btn.getAttribute('data-item-id');
-            if (!itemId) return;
-            
-            // Disable button during request
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch(`/menu/favorite/${itemId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        // Toggle visual state
-                        if (data.favorited) {
-                            btn.classList.add('favorited', 'bg-red-500', 'text-white');
-                            btn.classList.remove('bg-white/80', 'text-red-500');
-                            // Update icon to filled
-                            const icon = btn.querySelector('svg');
-                            if (icon) icon.classList.add('fill-current');
-                        } else {
-                            btn.classList.remove('favorited', 'bg-red-500', 'text-white');
-                            btn.classList.add('bg-white/80', 'text-red-500');
-                            // Update icon to outline
-                            const icon = btn.querySelector('svg');
-                            if (icon) icon.classList.remove('fill-current');
-                        }
-                    }
-                } else if (response.status === 401) {
-                    window.location.href = '/login';
-                }
-            } catch (error) {
-                console.error('Error toggling favorite:', error);
-            } finally {
-                btn.disabled = false;
-            }
-        });
-    });
-
-    // AJAX Cart Quantity Update Logic
-    const qtyInputs = document.querySelectorAll('.qty-input');
-    let updateTimeout = null;
-    
-    qtyInputs.forEach(input => {
-        input.addEventListener('change', async (e) => {
-            const productId = input.getAttribute('data-product-id');
-            const quantity = parseInt(input.value);
-            
-            if (!productId || isNaN(quantity) || quantity < 1) return;
-            
-            // Clamp quantity to valid range
-            if (quantity > 10) input.value = 10;
-            if (quantity < 1) input.value = 1;
-            
-            // Visual feedback - show loading state
-            input.classList.add('opacity-50');
-            
-            // Debounce to avoid too many requests
-            if (updateTimeout) clearTimeout(updateTimeout);
-            
-            updateTimeout = setTimeout(async () => {
-                try {
-                    const formData = new FormData();
-                    formData.append('productId', productId);
-                    formData.append('quantity', input.value);
-                    
-                    const response = await fetch('/cart/update', {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: formData
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            // Format number with 2 decimal places
-                            const formatPrice = (num) => parseFloat(num).toFixed(2);
-                            
-                            // Update item total in the same row
-                            const row = input.closest('.cart-item');
-                            if (row) {
-                                const itemTotalCell = row.querySelector('.item-total');
-                                if (itemTotalCell) {
-                                    itemTotalCell.textContent = 'IDR ' + formatPrice(data.itemTotal);
-                                }
-                            }
-                            
-                            // Update cart subtotal and total
-                            const subtotalEl = document.getElementById('cart-subtotal');
-                            const totalEl = document.getElementById('cart-total');
-                            if (subtotalEl) subtotalEl.textContent = formatPrice(data.cartTotal);
-                            if (totalEl) totalEl.textContent = formatPrice(data.cartTotal);
-                        }
-                    } else if (response.status === 401) {
-                        window.location.href = '/login';
-                    }
-                } catch (error) {
-                    console.error('Error updating cart:', error);
-                } finally {
-                    input.classList.remove('opacity-50');
-                }
-            }, 300); // 300ms debounce
         });
     });
 });

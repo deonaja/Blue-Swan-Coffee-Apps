@@ -173,7 +173,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200/50">
-                <tr th:each="item : ${cart.items}" th:data-product-id="${item.product.id}" class="cart-item group hover:bg-white/20 transition-colors">
+                <tr th:each="item : ${cart.items}" class="group hover:bg-white/20 transition-colors">
                   <td class="py-4 flex items-center gap-4">
                     <div class="w-16 h-16 bg-gray-200 rounded-xl overflow-hidden">
                       <img src="img/menu/1.jpg"
@@ -182,14 +182,20 @@
                     </div>
                     <span class="font-bold text-[#1a1a1a]" th:text="${item.product.name}">Espresso</span>
                   </td>
-                  <td class="py-4 text-gray-600 item-price" th:data-price="${item.product.price}" th:text="${'IDR ' + item.product.price}">IDR 25K</td>
+                  <td class="py-4 text-gray-600" th:text="${'IDR ' + item.product.price}">IDR 25K</td>
                   <td class="py-4">
-                    <div class="flex items-center gap-1">
-                      <input type="number" th:data-product-id="${item.product.id}" th:value="${item.quantity}" min="1" max="10"
-                        class="qty-input w-16 text-center bg-white/60 rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
-                    </div>
+                    <form action="/cart/update" method="post" class="flex items-center gap-1">
+                      <input type="hidden" name="productId" th:value="${item.product.id}" />
+                      <input type="number" name="quantity" th:value="${item.quantity}" min="1" max="10"
+                        class="w-16 text-center bg-white/60 rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-primary" />
+                      <button type="submit" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Update">
+                        <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                      </button>
+                    </form>
                   </td>
-                  <td class="py-4 font-bold text-primary item-total" th:text="${'IDR ' + (item.product.price * item.quantity)}">IDR 25K</td>
+                  <td class="py-4 font-bold text-primary" th:text="${'IDR ' + (item.product.price * item.quantity)}">IDR
+                    25K</td>
                   <td class="py-4">
                     <form action="/cart/remove" method="post">
                       <input type="hidden" name="productId" th:value="${item.product.id}" />
@@ -213,12 +219,12 @@
           <div class="space-y-4 mb-8">
             <div class="flex justify-between text-gray-600">
               <span>Subtotal</span>
-              <span class="font-bold text-[#1a1a1a]">IDR <span id="cart-subtotal" th:text="${cart.totalAmount}">0</span></span>
+              <span class="font-bold text-[#1a1a1a]">IDR <span th:text="${cart.totalAmount}">0</span></span>
             </div>
             <div class="border-t border-gray-300/50 my-4"></div>
             <div class="flex justify-between text-xl font-extrabold text-[#1a1a1a]">
               <span>Total</span>
-              <span class="text-primary">IDR <span id="cart-total" th:text="${cart.totalAmount}">0</span></span>
+              <span class="text-primary">IDR <span th:text="${cart.totalAmount}">0</span></span>
             </div>
           </div>
 
