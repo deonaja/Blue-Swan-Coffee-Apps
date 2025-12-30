@@ -82,12 +82,39 @@ public class CartController {
     }
 
     @PostMapping("/update")
-    public String updateCart(@RequestParam UUID productId, @RequestParam int quantity, HttpSession session) {
+    @org.springframework.web.bind.annotation.ResponseBody
+    public Object updateCart(@RequestParam UUID productId, @RequestParam int quantity, 
+            HttpSession session, jakarta.servlet.http.HttpServletRequest request) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return org.springframework.http.ResponseEntity.status(401).body("Unauthorized");
+            }
             return "redirect:/login";
         }
+        
         cartService.updateItemQuantity(user, productId, quantity);
+        
+        // If AJAX request, return updated totals
+        if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+            Cart cart = cartService.getCart(user);
+            
+            // Find the updated item
+            java.math.BigDecimal itemTotal = java.math.BigDecimal.ZERO;
+            for (var item : cart.getItems()) {
+                if (item.getProduct().getId().equals(productId)) {
+                    itemTotal = item.getProduct().getPrice().multiply(java.math.BigDecimal.valueOf(item.getQuantity()));
+                    break;
+                }
+            }
+            
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("itemTotal", itemTotal);
+            response.put("cartTotal", cart.getTotalAmount());
+            return response;
+        }
+        
         return "redirect:/cart";
     }
 
