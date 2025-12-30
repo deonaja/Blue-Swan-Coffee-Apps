@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class Payment {
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Order order;
 
     private BigDecimal amount;

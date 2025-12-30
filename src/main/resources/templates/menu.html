@@ -130,9 +130,12 @@
         </a>
 
         <a th:if="${session.user != null}" th:href="@{/profile}"
-          class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm"
+<<<<<<< HEAD
+          class="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all shadow-sm relative"
           title="Profil Saya">
           <i data-feather="user" class="w-5 h-5"></i>
+          <span th:if="${hasUnpaidOrder}"
+            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border border-white"></span>
         </a>
 
         <a th:if="${session.user != null and session.user.role == 'BARISTA'}" th:href="@{/barista/dashboard}"
@@ -140,7 +143,6 @@
           title="Barista Dashboard">
           <i data-feather="monitor" class="w-5 h-5"></i>
         </a>
-
         <a th:if="${session.user == null}" th:href="@{/login}"
           class="hidden lg:inline-block px-6 py-2 bg-primary text-white rounded-full font-semibold shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-0.5">Login</a>
         <a th:if="${session.user != null}" th:href="@{/logout}"

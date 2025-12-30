@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.UUID;
 
 @Controller
@@ -33,19 +32,19 @@ public class PaymentController {
             return "redirect:/login";
         }
 
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithDetails(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         // Validate Ownership
         if (!order.getUser().getId().equals(user.getId())) {
-             return "redirect:/orders";
+            return "redirect:/orders";
         }
 
         // Validate Status check removed to allow viewing history details
         // if (order.getStatus() != OrderStatus.CREATED) {
-        //    return "redirect:/orders";
+        // return "redirect:/orders";
         // }
-        
+
         // Check for expiry
         paymentService.validateAndUpdateOrderExpiry(order);
 
@@ -54,9 +53,10 @@ public class PaymentController {
         // Assuming createdAt is valid. Add 2 minutes.
         // We need to convert LocalDateTime to Instant (ZoneOffset)
         // Let's assume the system is in local zone.
-        java.time.ZonedDateTime deadlineZDT = order.getCreatedAt().plusMinutes(2).atZone(java.time.ZoneId.systemDefault());
+        java.time.ZonedDateTime deadlineZDT = order.getCreatedAt().plusMinutes(2)
+                .atZone(java.time.ZoneId.systemDefault());
         model.addAttribute("deadline", deadlineZDT.toInstant().toEpochMilli());
-        
+
         return "payment";
     }
 
@@ -69,14 +69,14 @@ public class PaymentController {
 
         try {
             Payment payment = paymentService.processPayment(orderId);
-                if (payment.getPaymentStatus() == PaymentStatus.SUCCESS) {
+            if (payment.getPaymentStatus() == PaymentStatus.SUCCESS) {
                 return "redirect:/profile?success";
             } else {
                 return "redirect:/profile?error=expired";
             }
         } catch (RuntimeException e) {
-             // Handle cases like already paid or logic errors
-             return "redirect:/profile?error=" + e.getMessage();
+            // Handle cases like already paid or logic errors
+            return "redirect:/profile?error=" + e.getMessage();
         }
     }
 }

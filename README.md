@@ -40,14 +40,22 @@ Selamat datang di repositori proyek **Blue Swan Coffee**. Ini adalah aplikasi we
     cd proyek-akhir-kelompok-3-ocd
     ```
 
-2.  **Konfigurasi Database**
+3.  **Konfigurasi Database**
     *   Pastikan MySQL sedang berjalan.
-    *   Buat database bernama `db_blueswan` (atau biarkan Spring Boot membuatnya).
-    *   Update `src/main/resources/application.properties` jika kredensial MySQL Anda berbeda:
-        ```properties
-        spring.datasource.username=root
-        spring.datasource.password=password_anda
+    *   Buat database bernama `db_blueswan` (opsional, karena aplikasi akan membuatnya otomatis).
+    *   Copy file konfigurasi template:
+        **Windows**:
+        ```bash
+        copy src\main\resources\application-local.properties.example src\main\resources\application-local.properties
         ```
+        **Mac/Linux**:
+        ```bash
+        cp src/main/resources/application-local.properties.example src/main/resources/application-local.properties
+        ```
+    *   Edit file `src/main/resources/application-local.properties` dan sesuaikan username/password database Anda.
+    *   **Catatan Penting**:
+        *   Jangan edit `application.properties` untuk config database, file itu khusus untuk profile `local`.
+        *   Defaultnya, aplikasi akan melakukan **Auto-Seeding (Reset Data)** setiap kali dijalankan (`ddl-auto=create`). Modifikasi file local ini jika ingin mengubah perilaku tersebut.
 
 3.  **Jalankan Aplikasi**
     ```bash

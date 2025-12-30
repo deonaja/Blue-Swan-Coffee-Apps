@@ -3,7 +3,9 @@ package com.blueswancoffee.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,14 +28,20 @@ public class Review {
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user; // Customer who wrote the review
 
     @ManyToOne
     @JoinColumn(name = "barista_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Barista barista; // Barista being reviewed
 
     @Column(name = "created_at")

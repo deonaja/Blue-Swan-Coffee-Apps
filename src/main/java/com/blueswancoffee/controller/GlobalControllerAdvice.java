@@ -14,6 +14,9 @@ public class GlobalControllerAdvice {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private com.blueswancoffee.repository.OrderRepository orderRepository;
+
     @ModelAttribute("cart")
     public Cart populateCart(HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -21,5 +24,14 @@ public class GlobalControllerAdvice {
             return cartService.getCart(user);
         }
         return null;
+    }
+
+    @ModelAttribute("hasUnpaidOrder")
+    public boolean hasUnpaidOrder(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            return orderRepository.existsByUserAndStatus(user, com.blueswancoffee.model.OrderStatus.CREATED);
+        }
+        return false;
     }
 }

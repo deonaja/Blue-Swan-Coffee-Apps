@@ -101,4 +101,23 @@ public class OrderController {
 
         return "redirect:/profile?success=review_saved";
     }
+
+    @GetMapping("/orders/{id}/details")
+    public String orderDetail(@org.springframework.web.bind.annotation.PathVariable("id") java.util.UUID id,
+            HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Order order = orderRepository.findByIdWithDetails(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            return "redirect:/profile?error=Unauthorized";
+        }
+
+        model.addAttribute("order", order);
+        return "order-detail";
+    }
 }
