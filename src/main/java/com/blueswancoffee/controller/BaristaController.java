@@ -103,4 +103,32 @@ public class BaristaController {
 
         return "redirect:/barista/dashboard";
     }
+    @GetMapping("/kds-fragment")
+    public String kdsFragment(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null || !"BARISTA".equals(user.getRole())) {
+            return "redirect:/login";
+        }
+
+        List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
+
+        // Filter orders: Same logic as dashboard
+        orders.removeIf(order -> order.getStatus() == null ||
+                order.getStatus() == OrderStatus.CREATED ||
+                order.getStatus() == OrderStatus.PICKED_UP ||
+                order.getStatus() == OrderStatus.CANCELED);
+
+        // Pre-calculate counts
+        long paidCount = orders.stream().filter(o -> o.getStatus() == OrderStatus.PAID).count();
+        long brewingCount = orders.stream().filter(o -> o.getStatus() == OrderStatus.BREWING).count();
+        long readyCount = orders.stream().filter(o -> o.getStatus() == OrderStatus.READY).count();
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("user", user);
+        model.addAttribute("paidCount", paidCount);
+        model.addAttribute("brewingCount", brewingCount);
+        model.addAttribute("readyCount", readyCount);
+
+        return "barista_dashboard :: kdsGrid";
+    }
 }

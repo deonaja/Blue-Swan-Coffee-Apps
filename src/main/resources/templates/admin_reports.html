@@ -12,6 +12,31 @@
         rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- pdf export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+    <style>
+        /* Custom Flatpickr Theme to match Glassmorphism */
+        .flatpickr-calendar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange, .flatpickr-day.selected:focus, .flatpickr-day.startRange:focus, .flatpickr-day.endRange:focus, .flatpickr-day.selected:hover, .flatpickr-day.startRange:hover, .flatpickr-day.endRange:hover, .flatpickr-day.selected.prevMonthDay, .flatpickr-day.startRange.prevMonthDay, .flatpickr-day.endRange.prevMonthDay, .flatpickr-day.selected.nextMonthDay, .flatpickr-day.startRange.nextMonthDay, .flatpickr-day.endRange.nextMonthDay {
+            background: #4a6fa5;
+            border-color: #4a6fa5;
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
@@ -112,6 +137,81 @@
                     class="text-green-600 italic">Reports</span></h1>
         </div>
 
+        <!-- Filter Card -->
+        <div class="glass-card p-4 rounded-2xl mb-8 max-w-6xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-6 relative z-30">
+            <!-- Left: Title -->
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="bg-primary/10 p-2.5 rounded-xl text-primary">
+                    <i data-feather="calendar" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[#1a1a1a] text-lg">Filter Period</h3>
+                    <p class="text-xs text-gray-500 font-medium">Customize your view</p>
+                </div>
+            </div>
+
+            <!-- Right: Actions (Filters + Export) -->
+            <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto justify-end">
+                
+                <!-- Filter Controls Group -->
+                <div class="flex items-center gap-2 bg-white/40 p-1.5 rounded-xl border border-white/50 shadow-sm">
+                    <!-- Toggle -->
+                    <div class="flex items-center bg-white/50 rounded-lg p-1 border border-white/60 relative">
+                        <button id="btnMonth" onclick="setFilterMode('month')" type="button"
+                            class="w-24 py-1.5 text-xs sm:text-sm rounded-md transition-all font-semibold z-10 relative text-center">Month</button>
+                        <button id="btnRange" onclick="setFilterMode('range')" type="button"
+                            class="w-24 py-1.5 text-xs sm:text-sm rounded-md transition-all font-semibold z-10 relative text-center">Range</button>
+                        
+                        <!-- Animated Background Pill -->
+                        <div id="togglePill" class="absolute top-1 left-1 bg-white shadow-md rounded-md h-[calc(100%-8px)] w-24 transition-transform duration-300 ease-spring"></div>
+                    </div>
+
+                    <!-- Inputs Form -->
+                    <form id="filterForm" th:action="@{/admin/reports}" method="get" class="flex items-center gap-2">
+                        <input type="hidden" name="month" id="hiddenMonth" th:value="${selectedMonth}">
+                        <input type="hidden" name="startDate" id="hiddenStartDate" th:value="${startDate}">
+                        <input type="hidden" name="endDate" id="hiddenEndDate" th:value="${endDate}">
+
+                        <!-- Visual Inputs -->
+                        <div class="relative w-[180px] sm:w-[240px]"> 
+                             <div id="monthPickerContainer" style="display: none;">
+                                 <input type="text" id="monthPickerVisual" class="w-full bg-white/60 border border-white/60 rounded-lg text-sm px-3 py-1.5 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none font-bold text-primary placeholder-gray-400 cursor-pointer transition-all hover:bg-white/80 text-center" placeholder="Bulan">
+                             </div>
+                             <div id="rangePickerContainer" style="display: none;">
+                                 <input type="text" id="rangePickerVisual" class="w-full bg-white/60 border border-white/60 rounded-lg text-sm px-3 py-1.5 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none font-bold text-primary placeholder-gray-400 cursor-pointer transition-all hover:bg-white/80 text-center" placeholder="Rentang">
+                             </div>
+                        </div>
+
+                        <button type="submit" class="bg-primary hover:bg-primary-dark text-white p-1.5 rounded-lg transition-colors shadow-lg shadow-primary/30 flex-shrink-0">
+                            <i data-feather="check" class="w-4 h-4"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Divider -->
+                <div class="w-px h-8 bg-black/10 hidden md:block"></div>
+
+                <!-- Export -->
+                <div class="relative group z-20">
+                    <button class="flex items-center gap-2 bg-white/50 hover:bg-white/80 border border-white/60 px-4 py-2 rounded-xl text-sm font-bold text-[#1a1a1a] transition-all shadow-sm">
+                        <i data-feather="download" class="w-4 h-4 text-primary"></i>
+                        <span class="hidden sm:inline">Export</span>
+                        <i data-feather="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                    </button>
+                    <!-- Dropdown -->
+                    <div class="absolute right-0 top-full mt-2 w-48 bg-white/95 backdrop-blur-md border border-white/20 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 p-1 z-50">
+                        <button onclick="exportPDF()" class="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors text-left">
+                            <i data-feather="file-text" class="w-4 h-4"></i> Export as PDF
+                        </button>
+                        <button onclick="exportCSV()" class="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors text-left">
+                            <i data-feather="grid" class="w-4 h-4"></i> Export as CSV
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <!-- KPI Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-6xl mx-auto">
             <!-- Total Revenue -->
@@ -121,9 +221,10 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Revenue</p>
-                    <h3 class="text-3xl font-bold text-[#1a1a1a]">IDR 15.4M</h3>
-                    <p class="text-xs text-green-600 flex items-center mt-1">
-                        <i data-feather="trending-up" class="w-3 h-3 mr-1"></i> +12.5% from last month
+                    <h3 class="text-2xl font-bold text-[#1a1a1a]" th:text="'IDR ' + ${#numbers.formatDecimal(totalRevenue, 0, 'POINT', 0, 'COMMA')}">IDR 0</h3>
+                    <p class="text-xs flex items-center mt-1" th:classappend="${revenueGrowth >= 0} ? 'text-green-600' : 'text-red-500'">
+                        <i th:attr="data-feather=${revenueGrowth >= 0 ? 'trending-up' : 'trending-down'}" class="w-3 h-3 mr-1"></i>
+                        <span th:text="${(revenueGrowth >= 0 ? '+' : '') + #numbers.formatDecimal(revenueGrowth, 1, 1) + '% vs prev period'}">0%</span>
                     </p>
                 </div>
             </div>
@@ -135,9 +236,10 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Total Orders</p>
-                    <h3 class="text-3xl font-bold text-[#1a1a1a]">482</h3>
-                    <p class="text-xs text-blue-600 flex items-center mt-1">
-                        <i data-feather="trending-up" class="w-3 h-3 mr-1"></i> +5% from last month
+                    <h3 class="text-3xl font-bold text-[#1a1a1a]" th:text="${totalOrders}">0</h3>
+                    <p class="text-xs flex items-center mt-1" th:classappend="${orderGrowth >= 0} ? 'text-blue-600' : 'text-red-500'">
+                         <i th:attr="data-feather=${orderGrowth >= 0 ? 'trending-up' : 'trending-down'}" class="w-3 h-3 mr-1"></i>
+                         <span th:text="${(orderGrowth >= 0 ? '+' : '') + #numbers.formatDecimal(orderGrowth, 1, 1) + '% vs prev period'}">0%</span>
                     </p>
                 </div>
             </div>
@@ -149,9 +251,9 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Active Customers</p>
-                    <h3 class="text-3xl font-bold text-[#1a1a1a]">128</h3>
+                    <h3 class="text-3xl font-bold text-[#1a1a1a]" th:text="${activeCustomers}">0</h3>
                     <p class="text-xs text-gray-500 flex items-center mt-1">
-                        Same as last month
+                        <span th:text="${activeCustomersGrowth >= 0 ? '+' : ''} + ${#numbers.formatDecimal(activeCustomersGrowth, 1, 1)} + '% vs prev period'">Same as last month</span>
                     </p>
                 </div>
             </div>
@@ -163,113 +265,32 @@
             <div class="glass-card p-8 rounded-[2rem]">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-[#1a1a1a]">Sales Overview</h3>
-                    <select class="bg-white/50 border-none rounded-lg text-sm px-3 py-1 focus:ring-0 cursor-pointer">
-                        <option>This Week</option>
-                        <option>This Month</option>
-                        <option>This Year</option>
-                    </select>
+                    <!-- Filter moved to top -->
                 </div>
                 <!-- Simple CSS Bar Chart Mockup -->
-                <div class="h-64 flex items-end justify-between gap-2 px-2">
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 40%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Mon</div>
-                    </div>
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 65%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Tue</div>
-                    </div>
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 50%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Wed</div>
-                    </div>
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 85%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Thu</div>
-                    </div>
-                    <div class="w-full bg-primary/60 rounded-t-lg hover:bg-primary transition-all relative group"
-                        style="height: 100%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Fri</div>
-                    </div>
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 75%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Sat</div>
-                    </div>
-                    <div class="w-full bg-primary/20 rounded-t-lg hover:bg-primary/40 transition-all relative group"
-                        style="height: 60%">
-                        <div
-                            class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                            Sun</div>
-                    </div>
-                </div>
+                <div id="salesChart" class="w-full h-80"></div>
             </div>
 
             <!-- Popular Products -->
             <div class="glass-card p-8 rounded-[2rem]">
                 <h3 class="text-xl font-bold text-[#1a1a1a] mb-6">Popular Products</h3>
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between p-3 hover:bg-white/30 rounded-xl transition-colors">
+                    
+                    <div th:each="prod : ${popularProducts}" class="flex items-center justify-between p-3 hover:bg-white/30 rounded-xl transition-colors">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden">
-                                <img src="/img/menu/1.jpg" alt="Coffee" class="w-full h-full object-cover">
+                                <img th:src="${prod.image}" alt="Coffee" class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <h4 class="font-bold text-[#1a1a1a]">Caramel Macchiato</h4>
-                                <p class="text-xs text-gray-500">Coffee</p>
+                                <h4 class="font-bold text-[#1a1a1a]" th:text="${prod.name}">Product Name</h4>
+                                <p class="text-xs text-gray-500" th:text="${prod.category}">Category</p>
                             </div>
                         </div>
-                        <span class="font-bold text-primary">124 sold</span>
+                        <span class="font-bold text-primary" th:text="${prod.quantity + ' sold'}">0 sold</span>
                     </div>
 
-                    <div class="flex items-center justify-between p-3 hover:bg-white/30 rounded-xl transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden">
-                                <img src="/img/menu/1.jpg" alt="Coffee" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-[#1a1a1a]">Vanilla Latte</h4>
-                                <p class="text-xs text-gray-500">Coffee</p>
-                            </div>
-                        </div>
-                        <span class="font-bold text-primary">98 sold</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-3 hover:bg-white/30 rounded-xl transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden">
-                                <img src="/img/menu/1.jpg" alt="Coffee" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-[#1a1a1a]">Butter Croissant</h4>
-                                <p class="text-xs text-gray-500">Snack</p>
-                            </div>
-                        </div>
-                        <span class="font-bold text-primary">85 sold</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-3 hover:bg-white/30 rounded-xl transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-gray-200 overflow-hidden">
-                                <img src="/img/menu/1.jpg" alt="Coffee" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-[#1a1a1a]">Americano</h4>
-                                <p class="text-xs text-gray-500">Coffee</p>
-                            </div>
-                        </div>
-                        <span class="font-bold text-primary">76 sold</span>
+                    <div th:if="${popularProducts.empty}" class="text-center text-gray-500 py-4">
+                        No product sales in this period.
                     </div>
                 </div>
             </div>
@@ -290,8 +311,262 @@
         </div>
     </footer>
 
-    <script>
+    <script th:inline="javascript">
         feather.replace();
+
+        // --- Filter Logic ---
+        let currentMode = /*[[${filterType}]]*/ 'month'; // 'month' or 'range'
+        const pill = document.getElementById('togglePill');
+        const monthContainer = document.getElementById('monthPickerContainer');
+        const rangeContainer = document.getElementById('rangePickerContainer');
+        const btnMonth = document.getElementById('btnMonth');
+        const btnRange = document.getElementById('btnRange');
+        
+        // Inputs
+        const hiddenMonth = document.getElementById('hiddenMonth');
+        const hiddenStart = document.getElementById('hiddenStartDate');
+        const hiddenEnd = document.getElementById('hiddenEndDate');
+
+        function setFilterMode(mode) {
+            currentMode = mode;
+            updateUI();
+        }
+
+        function updateUI() {
+            if (currentMode === 'month') {
+                // Animate Pill Left
+                pill.style.transform = 'translateX(0)';
+                
+                // Toggle Button Styles
+                btnMonth.classList.add('text-primary');
+                btnMonth.classList.remove('text-gray-500');
+                btnRange.classList.add('text-gray-500');
+                btnRange.classList.remove('text-primary');
+
+                // Toggle Inputs
+                monthContainer.style.display = 'block';
+                rangeContainer.style.display = 'none';
+                
+                // Disable/Enable Hidden
+                hiddenMonth.disabled = false;
+                hiddenStart.disabled = true;
+                hiddenEnd.disabled = true;
+
+            } else {
+                // Animate Pill Right (128px is w-32)
+                pill.style.transform = 'translateX(100%)';
+                
+                btnRange.classList.add('text-primary');
+                btnRange.classList.remove('text-gray-500');
+                btnMonth.classList.add('text-gray-500');
+                btnMonth.classList.remove('text-primary');
+                
+                monthContainer.style.display = 'none';
+                rangeContainer.style.display = 'block';
+
+                 // Disable/Enable Hidden
+                hiddenMonth.disabled = true;
+                hiddenStart.disabled = false;
+                hiddenEnd.disabled = false;
+            }
+        }
+
+        // Init Flatpickr
+        document.addEventListener("DOMContentLoaded", function() {
+            updateUI();
+
+            // 1. Month Picker
+            flatpickr("#monthPickerVisual", {
+                locale: "id",
+                plugins: [
+                    new monthSelectPlugin({
+                      shorthand: false, 
+                      dateFormat: "Y-m", 
+                      altInput: true,
+                      altFormat: "F Y", // e.g. Desember 2025
+                    })
+                ],
+                altInput: true,
+                altFormat: "F Y",
+                defaultDate: hiddenMonth.value || "today",
+                onChange: function(selectedDates, dateStr, instance) {
+                    hiddenMonth.value = dateStr; 
+                }
+            });
+
+            // 2. Range Picker
+            flatpickr("#rangePickerVisual", {
+                mode: "range",
+                locale: "id",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "d/m/Y", // Compact: 01/12/2025 to ...
+                defaultDate: [hiddenStart.value || "today", hiddenEnd.value || "today"],
+                onChange: function(selectedDates, dateStr, instance) {
+                   if (selectedDates.length === 2) {
+                       hiddenStart.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                       hiddenEnd.value = instance.formatDate(selectedDates[1], "Y-m-d");
+                   }
+                }
+            });
+        });
+
+        // --- Export Functions ---
+        async function exportPDF() {
+            // 1. Visual Feedback
+            document.body.style.cursor = 'wait';
+            
+            // 2. Select Elements
+            const main = document.querySelector('main');
+            const grid = document.querySelector('.grid.grid-cols-1.lg\\:grid-cols-2');
+            const nav = document.querySelector('nav');
+            const buttons = document.querySelectorAll('button, form, .no-print');
+            const glassCards = document.querySelectorAll('.glass-card');
+            
+            // 3. Save State
+            const originalGridClass = grid ? grid.className : '';
+            const originalStyles = [];
+            glassCards.forEach(c => {
+                originalStyles.push(c.style.cssText);
+                // Print Styling: Solid white, clean borders
+                c.style.background = '#ffffff';
+                c.style.backdropFilter = 'none';
+                c.style.boxShadow = 'none';
+                c.style.border = '1px solid #e5e7eb';
+            });
+
+            // 4. Mutate Layout (Force Vertical & Clean)
+            if (grid) {
+                grid.classList.remove('lg:grid-cols-2');
+                grid.classList.add('flex', 'flex-col', 'gap-8');
+            }
+            
+            // Hide Interface
+            if (nav) nav.style.display = 'none';
+            buttons.forEach(b => b.style.display = 'none');
+            const bottomLink = document.querySelector('.text-center.mt-8');
+            if (bottomLink) bottomLink.style.display = 'none';
+            
+            // Hide Filter Card entirely for PDF? Or keep it specific?
+            // User probably wants the Title.
+            // Let's hide the ACTIONS in the filter card but keep the title.
+            // The buttons selector above should handle the actions.
+
+            // 5. Wait for Chart Resize & Render
+            // ApexCharts needs time to redraw after width change
+            await new Promise(resolve => setTimeout(resolve, 800)); 
+
+            // 6. Generate PDF
+            const opt = {
+              margin:       [0.3, 0.3],
+              filename:     'Business_Report_BlueSwan.pdf',
+              image:        { type: 'jpeg', quality: 0.98 },
+              html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+              jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                await html2pdf().set(opt).from(main).save();
+            } catch (e) {
+                console.error("PDF Export Failed", e);
+                alert("Failed to export PDF locally.");
+            }
+
+            // 7. Restore State
+            if (grid) grid.className = originalGridClass;
+            glassCards.forEach((c, i) => c.style.cssText = originalStyles[i]);
+            
+            if (nav) nav.style.display = '';
+            buttons.forEach(b => b.style.display = '');
+            if (bottomLink) bottomLink.style.display = '';
+            
+            // Trigger layouts
+            window.dispatchEvent(new Event('resize'));
+            document.body.style.cursor = 'default';
+        }
+
+        function exportCSV() {
+            // Trigger backend CSV download with current filters
+            const params = new URLSearchParams(window.location.search);
+            window.location.href = '/admin/reports/export/csv?' + params.toString();
+        }
+
+        // --- Chart Logic ---
+        var options = {
+          series: [{
+            name: 'Sales',
+            data: /*[[${monthlySales}]]*/ [] 
+          }],
+          chart: {
+            type: 'area', 
+            height: 320,
+            fontFamily: 'Poppins, sans-serif',
+            toolbar: { show: false },
+            zoom: { enabled: false },
+            animations: { enabled: true }
+          },
+          dataLabels: { enabled: false },
+          stroke: {
+            curve: 'smooth',
+            width: 3,
+            colors: ['#4a6fa5']
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.6,
+                opacityTo: 0.2,
+                stops: [0, 100],
+                colorStops: [
+                    { offset: 0, color: '#4a6fa5', opacity: 0.6 },
+                    { offset: 100, color: '#d9c6b0', opacity: 0.1 }
+                ]
+            }
+          },
+          xaxis: {
+            categories: /*[[${monthLabels}]]*/ [], // Thymeleaf injects List<String>
+            type: 'datetime', // Smart date handling
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: {
+                style: { colors: '#6b7280', fontSize: '11px', fontFamily: 'Poppins' },
+                datetimeFormatter: {
+                    year: 'yyyy',
+                    month: "MMM 'yy",
+                    day: 'dd MMM'
+                }
+            },
+            tooltip: { enabled: false }
+          },
+          yaxis: {
+            labels: {
+                style: { colors: '#6b7280', fontSize: '11px', fontFamily: 'Poppins' },
+                formatter: function (value) {
+                    if (value >= 1000000) return (value/1000000).toFixed(1) + "M";
+                    if (value >= 1000) return (value/1000).toFixed(0) + "k";
+                    return value;
+                }
+            }
+          },
+          grid: {
+            borderColor: '#f3f4f6',
+            padding: { top: 10, right: 10, bottom: 0, left: 10 }
+          },
+          markers: { size: 0, hover: { size: 5, colors:['#4a6fa5'] } },
+          tooltip: {
+            theme: 'light',
+            y: {
+                formatter: function (val) {
+                    return "IDR " + new Intl.NumberFormat('id-ID').format(val);
+                }
+            }
+          },
+          colors: ['#4a6fa5']
+        };
+
+        var chart = new ApexCharts(document.querySelector("#salesChart"), options);
+        chart.render();
     </script>
 
 </body>

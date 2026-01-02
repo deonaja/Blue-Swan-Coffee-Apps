@@ -29,8 +29,11 @@ public class OrderController {
     @Autowired
     private ReviewRepository reviewRepository;
 
+
+
     @GetMapping("/profile")
     public String profile(HttpSession session, Model model,
+            @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false) String success,
             @RequestParam(required = false) String error) {
         User user = (User) session.getAttribute("user");
@@ -38,8 +41,23 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        List<Order> orders = orderRepository.findByUserOrderByCreatedAtDesc(user);
-        model.addAttribute("orders", orders);
+        // Summary Stats
+        List<Order> allOrders = orderRepository.findByUserOrderByCreatedAtDesc(user);
+        java.math.BigDecimal totalSpent = allOrders.stream()
+             .filter(o -> o.getStatus().name().equals("PAID") || o.getStatus().name().equals("PICKED_UP") || o.getStatus().name().equals("COMPLETED"))
+             .map(Order::getTotalAmount)
+             .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        
+        model.addAttribute("totalOrdersCount", allOrders.size());
+        model.addAttribute("totalSpent", totalSpent);
+
+        // Paginated Table
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 5);
+        org.springframework.data.domain.Page<Order> orderPage = orderRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+        
+        model.addAttribute("orders", orderPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
 
         if (success != null) {
             if (success.equals("review_saved")) {
