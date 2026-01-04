@@ -239,31 +239,26 @@
       <form id="reviewForm" method="post" action="">
         <div class="mb-6">
           <label class="block text-sm font-bold mb-2">Rating</label>
-          <div class="flex gap-4 justify-center">
+          <div class="flex gap-4 justify-center" id="starContainer">
             <label class="cursor-pointer hover:scale-110 transition-transform">
-              <input type="radio" name="rating" value="1" class="hidden peer" required>
-              <i data-feather="star"
-                class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 peer-checked:fill-yellow-400"></i>
+              <input type="radio" name="rating" value="1" class="hidden" required>
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
             </label>
             <label class="cursor-pointer hover:scale-110 transition-transform">
-              <input type="radio" name="rating" value="2" class="hidden peer">
-              <i data-feather="star"
-                class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 peer-checked:fill-yellow-400"></i>
+              <input type="radio" name="rating" value="2" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
             </label>
             <label class="cursor-pointer hover:scale-110 transition-transform">
-              <input type="radio" name="rating" value="3" class="hidden peer">
-              <i data-feather="star"
-                class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 peer-checked:fill-yellow-400"></i>
+              <input type="radio" name="rating" value="3" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
             </label>
             <label class="cursor-pointer hover:scale-110 transition-transform">
-              <input type="radio" name="rating" value="4" class="hidden peer">
-              <i data-feather="star"
-                class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 peer-checked:fill-yellow-400"></i>
+              <input type="radio" name="rating" value="4" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
             </label>
             <label class="cursor-pointer hover:scale-110 transition-transform">
-              <input type="radio" name="rating" value="5" class="hidden peer">
-              <i data-feather="star"
-                class="w-8 h-8 text-gray-300 peer-checked:text-yellow-400 peer-checked:fill-yellow-400"></i>
+              <input type="radio" name="rating" value="5" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
             </label>
           </div>
         </div>
@@ -305,22 +300,36 @@
     }
 
     // Star rating interaction (simple visual hack for radio buttons)
-    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+    // Star rating interaction
+    const starContainer = document.getElementById('starContainer');
+    const radios = starContainer.querySelectorAll('input[name="rating"]');
+    
+    // Function to update star colors
+    function updateStars(value) {
+      // Find all elements with class 'rating-star' inside the container
+      // feather.replace() keeps the original classes on the new <svg> elements
+      const stars = starContainer.querySelectorAll('.rating-star');
+      
+      stars.forEach((star, index) => {
+        if (index < value) {
+          star.classList.add('text-yellow-400', 'fill-yellow-400');
+          star.classList.remove('text-gray-300');
+        } else {
+          star.classList.remove('text-yellow-400', 'fill-yellow-400');
+          star.classList.add('text-gray-300');
+        }
+      });
+    }
+
+    // Event Listeners
+    radios.forEach(radio => {
       radio.addEventListener('change', function () {
-        const val = this.value;
-        const container = this.closest('.flex');
-        const stars = container.querySelectorAll('i');
-        stars.forEach((star, index) => {
-          if (index < val) {
-            star.classList.add('text-yellow-400', 'fill-yellow-400');
-            star.classList.remove('text-gray-300');
-          } else {
-            star.classList.remove('text-yellow-400', 'fill-yellow-400');
-            star.classList.add('text-gray-300');
-          }
-        });
+        updateStars(this.value);
       });
     });
+
+    // Initialize (if needed, e.g. for default value)
+    // updateStars(0);
   </script>
 </body>
 
