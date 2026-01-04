@@ -50,6 +50,14 @@ public class CartController {
             }
             return "redirect:/login";
         }
+
+        if (quantity <= 0) {
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                return org.springframework.http.ResponseEntity.badRequest().body("Quantity must be positive");
+            }
+             String referer = request.getHeader("Referer");
+             return "redirect:" + (referer != null ? referer : "/menu");
+        }
         
         cartService.addToCart(user, productId, quantity);
         
@@ -91,6 +99,13 @@ public class CartController {
                 return org.springframework.http.ResponseEntity.status(401).body("Unauthorized");
             }
             return "redirect:/login";
+        }
+        
+        if (quantity < 0) {
+             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                 return org.springframework.http.ResponseEntity.badRequest().body("Quantity cannot be negative");
+             }
+             return "redirect:/cart";
         }
         
         cartService.updateItemQuantity(user, productId, quantity);

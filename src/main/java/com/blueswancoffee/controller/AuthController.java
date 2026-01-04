@@ -29,6 +29,15 @@ public class AuthController {
         User user = authService.login(email, password);
         if (user != null) {
             session.setAttribute("user", user);
+            
+            // Set Spring Security Context
+            org.springframework.security.core.GrantedAuthority authority = new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole());
+            org.springframework.security.authentication.UsernamePasswordAuthenticationToken authentication = 
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(user, null, java.util.Collections.singletonList(authority));
+            org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Manually save context to session to ensure persistence across requests
+            session.setAttribute("SPRING_SECURITY_CONTEXT", org.springframework.security.core.context.SecurityContextHolder.getContext());
+
             if ("ADMIN".equals(user.getRole())) {
                 return "redirect:/admin/dashboard";
             }
@@ -68,6 +77,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
+        org.springframework.security.core.context.SecurityContextHolder.clearContext();
         session.invalidate();
         return "redirect:/";
     }

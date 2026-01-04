@@ -24,9 +24,7 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
         model.addAttribute("user", user);
         return "admin_dashboard";
     }
@@ -34,9 +32,7 @@ public class AdminController {
     @GetMapping("/menu/add")
     public String addMenuPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
         model.addAttribute("user", user);
         model.addAttribute("menuItem", new MenuItem());
         model.addAttribute("menuList", menuItemRepository.findAll());
@@ -46,9 +42,7 @@ public class AdminController {
     @GetMapping("/menu/edit/{id}")
     public String editMenuPage(@PathVariable("id") UUID id, HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
         MenuItem menuItem = menuItemRepository.findById(id).orElse(null);
         if (menuItem == null) {
             return "redirect:/admin/menu/add";
@@ -62,9 +56,7 @@ public class AdminController {
     @GetMapping("/menu/delete/{id}")
     public String deleteMenu(@PathVariable("id") UUID id, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
         menuItemRepository.deleteById(id);
         return "redirect:/admin/menu/add";
     }
@@ -78,9 +70,7 @@ public class AdminController {
                               @org.springframework.web.bind.annotation.RequestParam(value = "month", required = false) String monthStr,
                               HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
         model.addAttribute("user", user);
         
         java.time.LocalDateTime end = java.time.LocalDateTime.now();
@@ -148,14 +138,75 @@ public class AdminController {
     }
 
     @PostMapping("/menu/add")
-    public String addMenu(@ModelAttribute MenuItem menuItem, HttpSession session) {
+    public String addMenu(@jakarta.validation.Valid @ModelAttribute MenuItem menuItem,
+                          org.springframework.validation.BindingResult bindingResult,
+                          @org.springframework.web.bind.annotation.RequestParam(value = "imageFile", required = false) org.springframework.web.multipart.MultipartFile imageFile,
+                          HttpSession session,
+                          Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"ADMIN".equals(user.getRole())) {
-            return "redirect:/login";
+        // Role check handled by Spring Security
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("menuList", menuItemRepository.findAll());
+            // If editing, we need to make sure we don't lose the ID or existing data
+            return "admin_add_menu";
         }
-        // Basic validation or default values could go here
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Generate unique filename
+                String originalFilename = imageFile.getOriginalFilename();
+                String ext = "";
+                if (originalFilename != null && originalFilename.lastIndexOf(".") != -1) {
+                    ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String filename = UUID.randomUUID().toString() + ext;
+                
+                // Define upload path
+                // Note: This path depends on where the application is running. 
+                // For development, pointing to src/main/resources/static is often desired but can be tricky with hot reload.
+                // We will try to save to the absolute path of the project resource directory if possible, 
+                // but strictly speaking for a running jar it often goes to a temp folder or external config.
+                // For this school project context, we'll try to determine the path relative to the runtime or hardcode based on known structure if needed.
+                // Let's assume standard project structure for now.
+                
+                // Constructing path: System.getProperty("user.dir") usually points to project root in IDE
+                String projectDir = System.getProperty("user.dir");
+                java.nio.file.Path uploadPath = java.nio.file.Paths.get(projectDir, "src", "main", "resources", "static", "img", "menu");
+                
+                if (!java.nio.file.Files.exists(uploadPath)) {
+                    java.nio.file.Files.createDirectories(uploadPath);
+                }
+                
+                java.nio.file.Path filePath = uploadPath.resolve(filename);
+                java.nio.file.Files.copy(imageFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                
+                menuItem.setImageUrl("/img/menu/" + filename);
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                // Handle error (maybe redirect with error message)
+            }
+        } 
+        
+        // If editing and no new file, keep existing image logic is handled by @ModelAttribute if hidden field is present on form?
+        // Actually, if 'imageUrl' field is bound, it will have the value from the form (which matches existing if we put a hidden input or just the text input).
+        // If we remove the text input for user, we should ensure the existing URL is preserved if no new file is uploaded.
+        // We will check if it's null/empty after binding.
+        
         if (menuItem.getImageUrl() == null || menuItem.getImageUrl().isEmpty()) {
-            menuItem.setImageUrl("/img/menu/1.jpg"); // Default image
+             // If creating new and no image uploaded, default
+             if (menuItem.getId() == null) {
+                 menuItem.setImageUrl("/img/menu/1.jpg");
+             } else {
+                 // If editing and no new image, we hope the existing one was passed via hidden field.
+                 // If not, we might need to fetch it from DB. 
+                 // To be safe, let's fetch from DB if ID is present and URL is empty of new file provided/bound.
+                 MenuItem existing = menuItemRepository.findById(menuItem.getId()).orElse(null);
+                 if (existing != null) {
+                     menuItem.setImageUrl(existing.getImageUrl());
+                 }
+             }
         }
 
         menuItemRepository.save(menuItem);

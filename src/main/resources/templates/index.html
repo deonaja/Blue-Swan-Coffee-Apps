@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title>Blue Swan Coffee</title>
 
   <!-- Feather Icons -->
@@ -270,6 +272,7 @@
           </div>
 
           <form action="/cart/add" method="post" class="mt-auto">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <input type="hidden" name="productId" th:value="${item.id}" />
             <input type="hidden" name="quantity" value="1" />
             <button type="submit"

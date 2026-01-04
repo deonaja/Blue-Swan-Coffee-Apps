@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             feather.replace();
 
+            // Get CSRF Token
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
             try {
                 const formData = new FormData(form);
                 
@@ -85,7 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch('/cart/add', {
                         method: 'POST',
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            [csrfHeader]: csrfToken
                         },
                         body: formData
                     }),
@@ -162,11 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // Disable button during request
             btn.disabled = true;
             
+            // Get CSRF Token
+            const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
             try {
                 const response = await fetch(`/menu/favorite/${itemId}`, {
                     method: 'POST',
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                         [csrfHeader]: csrfToken
                     }
                 });
 
@@ -226,10 +236,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     formData.append('productId', productId);
                     formData.append('quantity', input.value);
                     
+                    // Get CSRF Token
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
                     const response = await fetch('/cart/update', {
                         method: 'POST',
                         headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-Requested-With': 'XMLHttpRequest',
+                            [csrfHeader]: csrfToken
                         },
                         body: formData
                     });

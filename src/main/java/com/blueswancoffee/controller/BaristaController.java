@@ -31,9 +31,7 @@ public class BaristaController {
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"BARISTA".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
 
         List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
 
@@ -66,9 +64,7 @@ public class BaristaController {
     @PostMapping("/order/{id}/status")
     public String updateStatus(@PathVariable UUID id, @RequestParam("status") String statusStr, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"BARISTA".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
 
         Order order = orderRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -106,9 +102,7 @@ public class BaristaController {
     @GetMapping("/kds-fragment")
     public String kdsFragment(HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
-        if (user == null || !"BARISTA".equals(user.getRole())) {
-            return "redirect:/login";
-        }
+        // Role check handled by Spring Security
 
         List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
 

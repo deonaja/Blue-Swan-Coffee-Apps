@@ -29,4 +29,16 @@ public abstract class User {
     private String password;
 
     private String role;
+
+    public boolean isAdmin() {
+        return "ADMIN".equals(this.role);
+    }
+    
+    public boolean isBarista() {
+        return "BARISTA".equals(this.role);
+    }
+    
+    public boolean isCustomer() {
+        return "CUSTOMER".equals(this.role);
+    }
 }

@@ -32,4 +32,15 @@ public class CartItem {
     private Integer quantity;
 
     private BigDecimal subtotal;
+
+    public void addQuantity(int qty) {
+        this.quantity += qty;
+        updateSubtotal();
+    }
+
+    public void updateSubtotal() {
+        if (product != null && quantity != null) {
+            this.subtotal = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        }
+    }
 }
