@@ -239,6 +239,7 @@
       <form id="reviewForm" method="post" action="">
         <div class="mb-6">
           <label class="block text-sm font-bold mb-2">Rating</label>
+<<<<<<< Updated upstream
           <div class="flex gap-4 justify-center" id="starContainer">
             <label class="cursor-pointer hover:scale-110 transition-transform">
               <input type="radio" name="rating" value="1" class="hidden" required>
@@ -259,6 +260,28 @@
             <label class="cursor-pointer hover:scale-110 transition-transform">
               <input type="radio" name="rating" value="5" class="hidden">
               <i data-feather="star" class="rating-star w-8 h-8 text-gray-300"></i>
+=======
+          <div class="flex gap-4 justify-center rating-container">
+            <label class="cursor-pointer hover:scale-110 transition-transform">
+              <input type="radio" name="rating" value="1" class="hidden" required>
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300 transition-colors duration-200"></i>
+            </label>
+            <label class="cursor-pointer hover:scale-110 transition-transform">
+              <input type="radio" name="rating" value="2" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300 transition-colors duration-200"></i>
+            </label>
+            <label class="cursor-pointer hover:scale-110 transition-transform">
+              <input type="radio" name="rating" value="3" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300 transition-colors duration-200"></i>
+            </label>
+            <label class="cursor-pointer hover:scale-110 transition-transform">
+              <input type="radio" name="rating" value="4" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300 transition-colors duration-200"></i>
+            </label>
+            <label class="cursor-pointer hover:scale-110 transition-transform">
+              <input type="radio" name="rating" value="5" class="hidden">
+              <i data-feather="star" class="rating-star w-8 h-8 text-gray-300 transition-colors duration-200"></i>
+>>>>>>> Stashed changes
             </label>
           </div>
         </div>
@@ -299,6 +322,7 @@
       modal.classList.remove('flex');
     }
 
+<<<<<<< Updated upstream
     // Star rating interaction (simple visual hack for radio buttons)
     // Star rating interaction
     const starContainer = document.getElementById('starContainer');
@@ -317,19 +341,57 @@
         } else {
           star.classList.remove('text-yellow-400', 'fill-yellow-400');
           star.classList.add('text-gray-300');
+=======
+    // Star rating logic
+    function updateStars(value) {
+      const stars = document.querySelectorAll('.rating-star');
+      console.log('Updating stars to value:', value, 'Found stars:', stars.length);
+      stars.forEach((star, index) => {
+        if (index < value) {
+          star.classList.remove('text-gray-300');
+          star.classList.add('text-yellow-400', 'fill-yellow-400');
+        } else {
+          star.classList.add('text-gray-300');
+          star.classList.remove('text-yellow-400', 'fill-yellow-400');
+>>>>>>> Stashed changes
         }
       });
     }
 
     // Event Listeners
+<<<<<<< Updated upstream
     radios.forEach(radio => {
       radio.addEventListener('change', function () {
+=======
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+>>>>>>> Stashed changes
         updateStars(this.value);
       });
     });
 
+<<<<<<< Updated upstream
     // Initialize (if needed, e.g. for default value)
     // updateStars(0);
+=======
+    // Reset when modal opens
+    const originalOpenReviewModal = window.openReviewModal; // Backup if needed, but we essentially overwrite or extend
+    
+    // We already have openReviewModal function defined above, let's just hook into it or modify the logic here if we could.
+    // However, since we are replacing this block, we can just ensure the modal opening logic also calls updateStars.
+    // But openReviewModal is defined at line 345 separately.
+    // Let's add an intersection observer or just simple click listener delegation if we strictly emulate "hooking".
+    // Or better, standard global function:
+    
+    // Override the openReviewModal to include star reset
+    const oldOpen = openReviewModal;
+    openReviewModal = function(orderId) {
+       oldOpen(orderId); // Call original
+       // Reset form and stars
+       document.getElementById('reviewForm').reset();
+       updateStars(0);
+    };
+>>>>>>> Stashed changes
   </script>
 </body>
 
