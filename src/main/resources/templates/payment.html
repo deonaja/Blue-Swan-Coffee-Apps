@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Pembayaran - Blue Swan Coffee</title>
 
     <!-- Feather Icons -->
@@ -279,6 +281,7 @@
                     </div>
 
                     <form th:action="@{/payment/process}" method="post" class="w-full mt-auto">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="orderId" th:value="${order.id}">
                         <button type="submit"
                             class="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-primary-dark transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">

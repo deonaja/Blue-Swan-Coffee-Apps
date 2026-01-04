@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title>Menu - Blue Swan Coffee</title>
 
   <!-- Feather Icons -->
@@ -227,6 +229,7 @@
             <span class="text-xl font-extrabold text-primary" th:text="${'IDR ' + item.price}">IDR 25K</span>
 
             <form action="/cart/add" method="post">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
               <input type="hidden" name="productId" th:value="${item.id}" />
               <input type="hidden" name="quantity" value="1" />
               <button type="submit"

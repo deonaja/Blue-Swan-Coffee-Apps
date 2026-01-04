@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${item.name + ' - Blue Swan Coffee'}">Msg - Blue Swan Coffee</title>
 
     <!-- Feather Icons -->
@@ -155,6 +157,7 @@
                     </p>
 
                     <form action="/cart/add" method="post" th:if="${item.isAvailable}" class="flex flex-col sm:flex-row gap-4">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <input type="hidden" name="productId" th:value="${item.id}" />
                         
                         <div class="flex items-center bg-white/60 rounded-full px-4 border border-white/50 w-fit">

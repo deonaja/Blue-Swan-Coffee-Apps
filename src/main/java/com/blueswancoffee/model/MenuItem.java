@@ -19,8 +19,11 @@ public class MenuItem {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @jakarta.validation.constraints.NotBlank(message = "Name is required")
     private String name;
 
+    @jakarta.validation.constraints.NotNull(message = "Price is required")
+    @jakarta.validation.constraints.PositiveOrZero(message = "Price cannot be negative")
     private BigDecimal price;
 
     private String description;

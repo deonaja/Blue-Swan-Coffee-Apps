@@ -4,6 +4,7 @@ import com.blueswancoffee.model.Order;
 
 import com.blueswancoffee.model.Payment;
 import com.blueswancoffee.model.PaymentStatus;
+
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.OrderRepository;
 import com.blueswancoffee.service.PaymentService;
@@ -53,7 +54,12 @@ public class PaymentController {
         // Assuming createdAt is valid. Add 2 minutes.
         // We need to convert LocalDateTime to Instant (ZoneOffset)
         // Let's assume the system is in local zone.
-        java.time.ZonedDateTime deadlineZDT = order.getCreatedAt().plusMinutes(2)
+        java.time.LocalDateTime createdAt = order.getCreatedAt();
+        if (createdAt == null) {
+            createdAt = java.time.LocalDateTime.now(); // Fallback to prevent crash
+        }
+        
+        java.time.ZonedDateTime deadlineZDT = createdAt.plusMinutes(2)
                 .atZone(java.time.ZoneId.systemDefault());
         model.addAttribute("deadline", deadlineZDT.toInstant().toEpochMilli());
 

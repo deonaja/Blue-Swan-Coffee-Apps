@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -67,4 +68,31 @@ public class Order {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Review review;
+
+    // --- Domain Logic ---
+
+    public boolean isExpired() {
+        if (this.status != OrderStatus.CREATED) return false;
+        long secondsDiff = Duration.between(this.createdAt, LocalDateTime.now()).toSeconds();
+        return secondsDiff > 120; // 2 minutes expiry
+    }
+
+    public void markAsPaid() {
+        if (this.status == OrderStatus.PAID) {
+            throw new RuntimeException("Order already paid");
+        }
+        if (this.status == OrderStatus.CANCELED) {
+            throw new RuntimeException("Order is canceled");
+        }
+        this.status = OrderStatus.PAID;
+        generatePickupCode();
+    }
+
+    public void markAsCanceled() {
+        this.status = OrderStatus.CANCELED;
+    }
+
+    private void generatePickupCode() {
+        this.pickupCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+    }
 }

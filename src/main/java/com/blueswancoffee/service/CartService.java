@@ -1,7 +1,6 @@
 package com.blueswancoffee.service;
 
 import com.blueswancoffee.model.Cart;
-import com.blueswancoffee.model.CartItem;
 import com.blueswancoffee.model.MenuItem;
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.CartRepository;
@@ -10,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,33 +22,12 @@ public class CartService {
 
     @Transactional
     public void addToCart(User user, UUID productId, int quantity) {
-        // 1. Get or Create Cart
         Cart cart = getCart(user);
-
-        // 2. Find Product
+        
         MenuItem product = menuItemRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // 3. Check if item exists in cart
-        Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst();
-
-        if (existingItem.isPresent()) {
-            CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + quantity);
-            item.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
-        } else {
-            CartItem newItem = new CartItem();
-            newItem.setCart(cart);
-            newItem.setProduct(product);
-            newItem.setQuantity(quantity);
-            newItem.setSubtotal(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
-            cart.getItems().add(newItem);
-        }
-
-        // 4. Update Total Amount
-        recalculateTotal(cart);
+        cart.addItem(product, quantity);
         cartRepository.save(cart);
     }
 
@@ -73,43 +49,23 @@ public class CartService {
     @Transactional
     public void clearCart(User user) {
         Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Cart not found"));
-        cart.getItems().clear();
-        cart.setTotalAmount(BigDecimal.ZERO);
+        cart.clear();
         cartRepository.save(cart);
     }
 
-    private void recalculateTotal(Cart cart) {
-        BigDecimal total = cart.getItems().stream()
-                .map(CartItem::getSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        cart.setTotalAmount(total);
-    }
+
 
     @Transactional
     public void removeItem(User user, UUID productId) {
         Cart cart = getCart(user);
-        cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
-        recalculateTotal(cart);
+        cart.removeItem(productId);
         cartRepository.save(cart);
     }
 
     @Transactional
     public void updateItemQuantity(User user, UUID productId, int quantity) {
         Cart cart = getCart(user);
-        Optional<CartItem> itemOpt = cart.getItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst();
-
-        if (itemOpt.isPresent()) {
-            CartItem item = itemOpt.get();
-            if (quantity <= 0) {
-                cart.getItems().remove(item);
-            } else {
-                item.setQuantity(quantity);
-                item.setSubtotal(item.getProduct().getPrice().multiply(BigDecimal.valueOf(quantity)));
-            }
-            recalculateTotal(cart);
-            cartRepository.save(cart);
-        }
+        cart.updateQuantity(productId, quantity);
+        cartRepository.save(cart);
     }
 }

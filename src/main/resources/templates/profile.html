@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="_csrf" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
   <title>Profil Saya - Blue Swan Coffee</title>
 
   <!-- Feather Icons -->
@@ -286,6 +288,7 @@
       <p class="text-gray-600 mb-6">How was your experience? Your feedback helps our baristas.</p>
 
       <form id="reviewForm" method="post" action="">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="mb-6">
           <label class="block text-sm font-bold mb-2">Rating</label>
           <div class="flex gap-4 justify-center">
