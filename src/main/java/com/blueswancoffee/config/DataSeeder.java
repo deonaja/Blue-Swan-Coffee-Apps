@@ -20,6 +20,15 @@ public class DataSeeder implements CommandLineRunner {
     private final com.blueswancoffee.repository.OrderItemRepository orderItemRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
+    @org.springframework.beans.factory.annotation.Value("${app.seed.admin.password}")
+    private String adminPassword;
+
+    @org.springframework.beans.factory.annotation.Value("${app.seed.barista.password}")
+    private String baristaPassword;
+
+    @org.springframework.beans.factory.annotation.Value("${app.seed.customer.password}")
+    private String customerPassword;
+
     public DataSeeder(UserRepository userRepository, MenuItemRepository menuItemRepository, com.blueswancoffee.repository.OrderRepository orderRepository, com.blueswancoffee.repository.OrderItemRepository orderItemRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.menuItemRepository = menuItemRepository;
@@ -64,21 +73,21 @@ public class DataSeeder implements CommandLineRunner {
             Admin admin = new Admin();
             admin.setName("Admin User");
             admin.setEmail("admin@blueswan.com");
-            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole("ADMIN");
             userRepository.save(admin);
 
             Barista barista = new Barista();
             barista.setName("Barista User");
             barista.setEmail("barista@blueswan.com");
-            barista.setPassword(passwordEncoder.encode("barista123"));
+            barista.setPassword(passwordEncoder.encode(baristaPassword));
             barista.setRole("BARISTA");
             userRepository.save(barista);
 
             Customer customer = new Customer();
             customer.setName("Customer User");
             customer.setEmail("customer@blueswan.com");
-            customer.setPassword(passwordEncoder.encode("user123"));
+            customer.setPassword(passwordEncoder.encode(customerPassword));
             customer.setRole("CUSTOMER");
             userRepository.save(customer);
 
@@ -150,7 +159,7 @@ public class DataSeeder implements CommandLineRunner {
             customer = new Customer();
             customer.setName("Customer User");
             customer.setEmail("customer@blueswan.com");
-            customer.setPassword(passwordEncoder.encode("user123"));
+            customer.setPassword(passwordEncoder.encode(customerPassword));
             customer.setRole("CUSTOMER");
             userRepository.save(customer);
         }

@@ -5,7 +5,7 @@ import com.blueswancoffee.model.MenuItem;
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.FavoriteRepository;
 import com.blueswancoffee.repository.MenuItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +16,13 @@ import java.util.UUID;
 @Service
 public class FavoriteService {
 
-    @Autowired
-    private FavoriteRepository favoriteRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final MenuItemRepository menuItemRepository;
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    public FavoriteService(FavoriteRepository favoriteRepository, MenuItemRepository menuItemRepository) {
+        this.favoriteRepository = favoriteRepository;
+        this.menuItemRepository = menuItemRepository;
+    }
 
     /**
      * Toggle favorite status for a menu item

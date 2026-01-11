@@ -7,7 +7,7 @@ import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.OrderRepository;
 import com.blueswancoffee.repository.ReviewRepository;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +23,13 @@ import java.util.UUID;
 @Controller
 public class OrderController {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final ReviewRepository reviewRepository;
 
-    @Autowired
-    private ReviewRepository reviewRepository;
+    public OrderController(OrderRepository orderRepository, ReviewRepository reviewRepository) {
+        this.orderRepository = orderRepository;
+        this.reviewRepository = reviewRepository;
+    }
 
 
 

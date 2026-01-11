@@ -9,7 +9,7 @@ import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.OrderRepository;
 import com.blueswancoffee.service.PaymentService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +20,13 @@ import java.util.UUID;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    public PaymentController(PaymentService paymentService, OrderRepository orderRepository) {
+        this.paymentService = paymentService;
+        this.orderRepository = orderRepository;
+    }
 
     @GetMapping("/{orderId}")
     public String paymentPage(@PathVariable UUID orderId, HttpSession session, Model model) {

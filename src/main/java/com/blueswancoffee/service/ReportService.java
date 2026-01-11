@@ -3,7 +3,7 @@ package com.blueswancoffee.service;
 import com.blueswancoffee.model.Order;
 import com.blueswancoffee.model.OrderStatus;
 import com.blueswancoffee.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,8 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class ReportService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+
+    public ReportService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     // Old getDashboardStats removed
     // ...

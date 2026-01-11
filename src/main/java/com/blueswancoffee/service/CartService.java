@@ -5,7 +5,7 @@ import com.blueswancoffee.model.MenuItem;
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.CartRepository;
 import com.blueswancoffee.repository.MenuItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +14,13 @@ import java.util.UUID;
 @Service
 public class CartService {
 
-    @Autowired
-    private CartRepository cartRepository;
+    private final CartRepository cartRepository;
+    private final MenuItemRepository menuItemRepository;
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    public CartService(CartRepository cartRepository, MenuItemRepository menuItemRepository) {
+        this.cartRepository = cartRepository;
+        this.menuItemRepository = menuItemRepository;
+    }
 
     @Transactional
     public void addToCart(User user, UUID productId, int quantity) {

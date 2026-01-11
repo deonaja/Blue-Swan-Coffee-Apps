@@ -5,21 +5,22 @@ import com.blueswancoffee.model.*;
 import com.blueswancoffee.repository.OrderItemRepository;
 import com.blueswancoffee.repository.OrderRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final CartService cartService;
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-    @Autowired
-    private CartService cartService;
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, CartService cartService) {
+        this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.cartService = cartService;
+    }
 
     @Transactional
     public Order checkout(User user) {

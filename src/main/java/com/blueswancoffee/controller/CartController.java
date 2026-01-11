@@ -5,7 +5,7 @@ import com.blueswancoffee.model.User;
 import com.blueswancoffee.service.CartService;
 import com.blueswancoffee.service.OrderService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +19,13 @@ import java.util.UUID;
 @RequestMapping("/cart")
 public class CartController {
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
+    private final OrderService orderService;
 
-    @Autowired
-    private OrderService orderService;
+    public CartController(CartService cartService, OrderService orderService) {
+        this.cartService = cartService;
+        this.orderService = orderService;
+    }
 
     @GetMapping
     public String viewCart(HttpSession session, Model model) {
@@ -55,8 +57,7 @@ public class CartController {
             if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
                 return org.springframework.http.ResponseEntity.badRequest().body("Quantity must be positive");
             }
-             String referer = request.getHeader("Referer");
-             return "redirect:" + (referer != null ? referer : "/menu");
+             return "redirect:/menu";
         }
         
         cartService.addToCart(user, productId, quantity);
@@ -74,8 +75,7 @@ public class CartController {
             return response;
         }
 
-        String referer = request.getHeader("Referer");
-        return "redirect:" + (referer != null ? referer : "/menu");
+        return "redirect:/menu";
     }
 
     @PostMapping("/checkout")

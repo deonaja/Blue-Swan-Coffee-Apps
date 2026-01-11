@@ -5,7 +5,7 @@ import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.MenuItemRepository;
 import com.blueswancoffee.service.FavoriteService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,11 +20,13 @@ import java.util.stream.Collectors;
 @Controller
 public class MenuController {
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
+    private final FavoriteService favoriteService;
 
-    @Autowired
-    private FavoriteService favoriteService;
+    public MenuController(MenuItemRepository menuItemRepository, FavoriteService favoriteService) {
+        this.menuItemRepository = menuItemRepository;
+        this.favoriteService = favoriteService;
+    }
 
     @GetMapping("/menu")
     public String menu(Model model, HttpSession session) {

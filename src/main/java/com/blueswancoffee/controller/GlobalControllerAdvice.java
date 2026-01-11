@@ -5,7 +5,7 @@ import com.blueswancoffee.model.User;
 import com.blueswancoffee.model.OrderStatus;
 import com.blueswancoffee.service.CartService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    @Autowired
-    private CartService cartService;
+    private final CartService cartService;
+    private final com.blueswancoffee.repository.OrderRepository orderRepository;
 
-    @Autowired
-    private com.blueswancoffee.repository.OrderRepository orderRepository;
+    public GlobalControllerAdvice(CartService cartService, com.blueswancoffee.repository.OrderRepository orderRepository) {
+        this.cartService = cartService;
+        this.orderRepository = orderRepository;
+    }
 
     @ModelAttribute("cart")
     public Cart populateCart(HttpSession session) {

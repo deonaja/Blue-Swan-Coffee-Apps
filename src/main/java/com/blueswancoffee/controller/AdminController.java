@@ -4,7 +4,7 @@ import com.blueswancoffee.model.MenuItem;
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.MenuItemRepository;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +18,13 @@ import java.util.UUID;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
+    private final com.blueswancoffee.service.ReportService reportService;
+
+    public AdminController(MenuItemRepository menuItemRepository, com.blueswancoffee.service.ReportService reportService) {
+        this.menuItemRepository = menuItemRepository;
+        this.reportService = reportService;
+    }
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
@@ -60,9 +65,6 @@ public class AdminController {
         menuItemRepository.deleteById(id);
         return "redirect:/admin/menu/add";
     }
-
-    @Autowired
-    private com.blueswancoffee.service.ReportService reportService;
 
     @GetMapping("/reports")
     public String viewReports(@org.springframework.web.bind.annotation.RequestParam(value = "startDate", required = false) String startDateStr,

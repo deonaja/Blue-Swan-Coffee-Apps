@@ -4,7 +4,7 @@ import com.blueswancoffee.model.*;
 
 import com.blueswancoffee.repository.OrderRepository;
 import com.blueswancoffee.repository.PaymentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +13,13 @@ import java.util.UUID;
 @Service
 public class PaymentService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final PaymentRepository paymentRepository;
 
-    @Autowired
-    private PaymentRepository paymentRepository;
+    public PaymentService(OrderRepository orderRepository, PaymentRepository paymentRepository) {
+        this.orderRepository = orderRepository;
+        this.paymentRepository = paymentRepository;
+    }
 
     @Transactional
     public Payment processPayment(UUID orderId) {

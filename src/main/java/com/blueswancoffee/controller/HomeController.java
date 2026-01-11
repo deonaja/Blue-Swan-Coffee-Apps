@@ -2,7 +2,7 @@ package com.blueswancoffee.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.ui.Model;
 import com.blueswancoffee.repository.MenuItemRepository;
 import com.blueswancoffee.model.MenuItem;
@@ -12,8 +12,11 @@ import java.util.stream.Collectors;
 @Controller
 public class HomeController {
 
-    @Autowired
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
+
+    public HomeController(MenuItemRepository menuItemRepository) {
+        this.menuItemRepository = menuItemRepository;
+    }
 
     @GetMapping("/")
     public String home(Model model) {

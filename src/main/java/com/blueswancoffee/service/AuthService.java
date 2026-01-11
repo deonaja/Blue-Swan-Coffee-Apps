@@ -2,7 +2,7 @@ package com.blueswancoffee.service;
 
 import com.blueswancoffee.model.User;
 import com.blueswancoffee.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,11 +10,13 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    public AuthService(UserRepository userRepository, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public User register(User user) {
         // Normalize email to lowercase

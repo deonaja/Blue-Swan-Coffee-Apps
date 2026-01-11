@@ -216,9 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
     qtyInputs.forEach(input => {
         input.addEventListener('change', async (e) => {
             const productId = input.getAttribute('data-product-id');
-            const quantity = parseInt(input.value);
+            const quantity = Number.parseInt(input.value);
             
-            if (!productId || isNaN(quantity) || quantity < 1) return;
+            if (!productId || Number.isNaN(quantity) || quantity < 1) return;
             
             // Clamp quantity to valid range
             if (quantity > 10) input.value = 10;
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const data = await response.json();
                         if (data.success) {
                             // Format number with 2 decimal places
-                            const formatPrice = (num) => parseFloat(num).toFixed(2);
+                            const formatPrice = (num) => Number.parseFloat(num).toFixed(2);
                             
                             // Update item total in the same row
                             const row = input.closest('.cart-item');
