@@ -186,12 +186,12 @@
       
       function increment() {
           const input = document.getElementById('qty');
-          if(input.value < 10) input.value = parseInt(input.value) + 1;
+          if(input.value < 10) input.value = Number.parseInt(input.value) + 1;
       }
       
       function decrement() {
           const input = document.getElementById('qty');
-          if(input.value > 1) input.value = parseInt(input.value) - 1;
+          if(input.value > 1) input.value = Number.parseInt(input.value) - 1;
       }
     </script>
     <script th:src="@{/js/script.js}"></script>

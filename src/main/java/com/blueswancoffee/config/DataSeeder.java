@@ -175,8 +175,10 @@ public class DataSeeder implements CommandLineRunner {
         System.out.println("Dummy data seeded successfully.");
     }
 
+    private static final java.util.Random random = new java.util.Random();
+
     private void generateOrdersForMonth(Customer user, java.time.LocalDateTime monthDate, int count, double totalTarget) {
-        java.util.Random random = new java.util.Random();
+        // reused random field
         for (int i = 0; i < count; i++) {
             com.blueswancoffee.model.Order order = new com.blueswancoffee.model.Order();
             order.setUser(user);
@@ -211,7 +213,7 @@ public class DataSeeder implements CommandLineRunner {
         java.util.List<MenuItem> allItems = menuItemRepository.findAll();
         if (allItems.isEmpty()) return;
         
-        java.util.Random random = new java.util.Random();
+        // reused random field
         int itemCount = 1 + random.nextInt(3); // 1 to 3 items
         
         for (int i = 0; i < itemCount; i++) {

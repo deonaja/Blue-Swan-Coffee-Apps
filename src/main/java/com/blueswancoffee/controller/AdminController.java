@@ -58,9 +58,8 @@ public class AdminController {
         return "admin_add_menu";
     }
 
-    @GetMapping("/menu/delete/{id}")
-    public String deleteMenu(@PathVariable("id") UUID id, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+    @PostMapping("/menu/delete/{id}")
+    public String deleteMenu(@PathVariable("id") UUID id) {
         // Role check handled by Spring Security
         menuItemRepository.deleteById(id);
         return "redirect:/admin/menu/add";

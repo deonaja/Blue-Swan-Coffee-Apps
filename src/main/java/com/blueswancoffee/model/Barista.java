@@ -4,7 +4,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.blueswancoffee.model.Brewable;
+
 
 @Data
 @EqualsAndHashCode(callSuper = true)
