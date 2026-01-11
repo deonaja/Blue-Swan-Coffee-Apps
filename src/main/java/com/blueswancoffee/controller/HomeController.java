@@ -19,7 +19,16 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, jakarta.servlet.http.HttpSession session) {
+        com.blueswancoffee.model.User user = (com.blueswancoffee.model.User) session.getAttribute("user");
+        if (user != null) {
+            if ("ADMIN".equals(user.getRole())) {
+                return "redirect:/admin/dashboard";
+            }
+            if ("BARISTA".equals(user.getRole())) {
+                return "redirect:/barista/dashboard";
+            }
+        }
         List<MenuItem> products = menuItemRepository.findAll();
         // Take first 4 items as favorites for now, or randomize
         List<MenuItem> favorites = products.stream().limit(4).collect(Collectors.toList());

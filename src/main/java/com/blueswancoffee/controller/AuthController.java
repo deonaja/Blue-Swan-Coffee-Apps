@@ -20,7 +20,16 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            if ("ADMIN".equals(user.getRole())) {
+                return "redirect:/admin/dashboard";
+            }
+            if ("BARISTA".equals(user.getRole())) {
+                return "redirect:/barista/dashboard";
+            }
+        }
         return "login";
     }
 
