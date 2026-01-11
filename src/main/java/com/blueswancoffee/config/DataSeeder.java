@@ -175,7 +175,7 @@ public class DataSeeder implements CommandLineRunner {
         System.out.println("Dummy data seeded successfully.");
     }
 
-    private static final java.util.Random random = new java.util.Random();
+    private static final java.security.SecureRandom random = new java.security.SecureRandom();
 
     private void generateOrdersForMonth(Customer user, java.time.LocalDateTime monthDate, int count, double totalTarget) {
         // reused random field
