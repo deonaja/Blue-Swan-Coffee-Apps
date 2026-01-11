@@ -59,9 +59,16 @@ public class AdminController {
     }
 
     @PostMapping("/menu/delete/{id}")
-    public String deleteMenu(@PathVariable("id") UUID id) {
+    public String deleteMenu(@PathVariable("id") UUID id,
+                             org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         // Role check handled by Spring Security
-        menuItemRepository.deleteById(id);
+        try {
+            menuItemRepository.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Menu item deleted successfully!");
+        } catch (Exception e) {
+            // Likely a foreign key constraint violation (item is in an order)
+            redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete menu item. It may be part of an existing order.");
+        }
         return "redirect:/admin/menu/add";
     }
 
@@ -154,6 +161,7 @@ public class AdminController {
             return "admin_add_menu";
         }
 
+        // Handle Image Upload
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 // Generate unique filename
@@ -164,17 +172,9 @@ public class AdminController {
                 }
                 String filename = UUID.randomUUID().toString() + ext;
                 
-                // Define upload path
-                // Note: This path depends on where the application is running. 
-                // For development, pointing to src/main/resources/static is often desired but can be tricky with hot reload.
-                // We will try to save to the absolute path of the project resource directory if possible, 
-                // but strictly speaking for a running jar it often goes to a temp folder or external config.
-                // For this school project context, we'll try to determine the path relative to the runtime or hardcode based on known structure if needed.
-                // Let's assume standard project structure for now.
-                
-                // Constructing path: System.getProperty("user.dir") usually points to project root in IDE
-                String projectDir = System.getProperty("user.dir");
-                java.nio.file.Path uploadPath = java.nio.file.Paths.get(projectDir, "src", "main", "resources", "static", "img", "menu");
+                // Define upload path - Relative to runtime directory
+                // Ideally this should be externalized to application.properties
+                java.nio.file.Path uploadPath = java.nio.file.Paths.get("uploads");
                 
                 if (!java.nio.file.Files.exists(uploadPath)) {
                     java.nio.file.Files.createDirectories(uploadPath);
